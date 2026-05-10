@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai> -->
 
 # Spec Map
@@ -12,10 +12,9 @@ Code can be inconsistent with specs during development.
 ```text
 decisions/  Decision records (DRs)
 iterations/ Iteration records (IRs)
-items/      Spec item files
-    user/       User-visible behavior
-    dev/        Implementation requirements
-    test/       Acceptance testing
+user/       Item files for user-visible behavior
+dev/        Item files for system internal behavior
+test/       Item files for acceptance testing
 map.md      This index
 meta.md     The spec of specs
 ```
@@ -38,11 +37,11 @@ meta.md     The spec of specs
 
 | Group | File | Summary |
 | --- | --- | --- |
-| dev | [git.md](items/dev/git.md) | Commit message format and AI co-authorship trailers |
+| dev | [git.md](dev/git.md) | Commit message format and AI co-authorship trailers |
 
 ### LIC
 
 | Group | File | Summary |
 | --- | --- | --- |
-| dev | [licensing.md](items/dev/licensing.md) | SPDX header requirements and file-scope rules |
-| test | [licensing.md](items/test/licensing.md) | Copyright and license header presence checks |
+| dev | [licensing.md](dev/licensing.md) | SPDX header requirements and file-scope rules |
+| test | [licensing.md](test/licensing.md) | Copyright and license header presence checks |

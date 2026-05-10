@@ -1,4 +1,4 @@
-<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 <!-- SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai> -->
 
 # IR-000: SPDX Headers
@@ -10,7 +10,7 @@ Add SPDX headers (license and copyright info) to applicable files.
 ## Deliverables
 
 - [x] Add SPDX headers to applicable files missing them
-- [x] Document header format in [items/dev/licensing.md](../items/dev/licensing.md)
+- [x] Document header format in [dev/licensing.md](../dev/licensing.md)
 
 ## Tasks
 
@@ -28,7 +28,7 @@ Add SPDX headers (license and copyright info) to applicable files.
 
 3. **Add headers** in the first comment block (after shebang if present), using appropriate comment syntax per file type
 
-4. **Document format** in [items/dev/licensing.md](../items/dev/licensing.md) according to the license(s). E.g.:
+4. **Document format** in [dev/licensing.md](../dev/licensing.md) according to the license(s). E.g.:
 
    > **Source code** (including specs):
    >
@@ -51,5 +51,5 @@ Add SPDX headers (license and copyright info) to applicable files.
 
 ## Acceptance criteria
 
-- All source files have SPDX-FileCopyrightText header ([LIC-6](../items/test/licensing.md#lic-6))
-- Files have SPDX-License-Identifier if a license file exists ([LIC-7](../items/test/licensing.md#lic-7))
+- All source files have SPDX-FileCopyrightText header ([LIC-6](../test/licensing.md#lic-6))
+- Files have SPDX-License-Identifier if a license file exists ([LIC-7](../test/licensing.md#lic-7))

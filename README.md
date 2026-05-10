@@ -17,6 +17,7 @@ npm run build    # production build to ./dist/
 
 - Code: [AGPL-3.0-or-later](LICENSE)
 - Content: [CC-BY-SA-4.0](LICENSE-CONTENT)
+- Specs from [sublang-ai/spex](https://github.com/sublang-ai/spex): [Apache-2.0](LICENSE-APACHE)
 
 ## Credit
 

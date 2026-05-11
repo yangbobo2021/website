@@ -14,22 +14,22 @@ import {
 export async function getStaticPaths() {
 	const entries = await getCollection('ref');
 
+	type Bucket = { entry: CollectionEntry<'ref'>; slug: string };
+	const byLocale = new Map<Locale, Bucket[]>();
 	const translationLocales = new Map<string, Set<Locale>>();
-	const byLocale: Record<Locale, Array<{ entry: CollectionEntry<'ref'>; slug: string }>> = {
-		en: [],
-		zh: [],
-	};
 	for (const entry of entries) {
 		const parsed = stripLocaleFromId(entry.id);
 		if (!parsed) continue;
-		byLocale[parsed.locale].push({ entry, slug: parsed.slug });
+		const bucket = byLocale.get(parsed.locale) ?? [];
+		bucket.push({ entry, slug: parsed.slug });
+		byLocale.set(parsed.locale, bucket);
 		const set = translationLocales.get(parsed.slug) ?? new Set<Locale>();
 		set.add(parsed.locale);
 		translationLocales.set(parsed.slug, set);
 	}
 
 	return NON_DEFAULT_LOCALES.flatMap((locale) =>
-		byLocale[locale].map(({ entry, slug }) => ({
+		(byLocale.get(locale) ?? []).map(({ entry, slug }) => ({
 			params: { locale, slug },
 			props: {
 				entry,

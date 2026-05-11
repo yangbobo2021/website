@@ -5,13 +5,14 @@
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
+import { DEFAULT_LOCALE, HTML_LANG, LOCALES } from './src/i18n/config.ts';
 
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://sublang.ai',
 	i18n: {
-		defaultLocale: 'en',
-		locales: ['en', 'zh'],
+		defaultLocale: DEFAULT_LOCALE,
+		locales: [...LOCALES],
 		routing: {
 			prefixDefaultLocale: false,
 		},
@@ -20,11 +21,8 @@ export default defineConfig({
 		mdx(),
 		sitemap({
 			i18n: {
-				defaultLocale: 'en',
-				locales: {
-					en: 'en',
-					zh: 'zh-Hans',
-				},
+				defaultLocale: DEFAULT_LOCALE,
+				locales: Object.fromEntries(LOCALES.map((locale) => [locale, HTML_LANG[locale]])),
 			},
 		}),
 	],

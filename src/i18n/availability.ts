@@ -13,7 +13,7 @@ import { DEFAULT_LOCALE, type Locale } from './config';
  * translation = appending the locale here AND authoring the page.
  */
 export const ROUTE_AVAILABILITY: Record<string, readonly Locale[]> = {
-	'/': ['en', 'zh'],
+	'/': ['en'],
 	'/engineering/': ['en'],
 };
 

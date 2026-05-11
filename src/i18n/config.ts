@@ -11,8 +11,8 @@ export const NON_DEFAULT_LOCALES = LOCALES.filter(
 );
 
 export const LOCALE_LABELS: Record<Locale, string> = {
-	en: 'English',
-	zh: '简体中文',
+	en: 'EN',
+	zh: '中文',
 };
 
 export const HTML_LANG: Record<Locale, string> = {

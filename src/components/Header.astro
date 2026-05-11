@@ -34,7 +34,13 @@ const navItems: NavItem[] = [
 	{ path: '/', label: t.home },
 	{ path: '/engineering/', label: t.engineering },
 ];
-const homeHref = localeHref(activeLocale, '/');
+// The logo is a brand anchor that should always lead somewhere usable; if the
+// active locale has no home, fall back to the default-locale root rather than
+// linking to a page that does not exist. Text "Home" nav still follows the
+// strict availability rule below.
+const homeHref = isRouteAvailable('/', activeLocale)
+	? localeHref(activeLocale, '/')
+	: localeHref(DEFAULT_LOCALE, '/');
 ---
 
 <header class="site-header">
@@ -62,31 +68,44 @@ const homeHref = localeHref(activeLocale, '/');
 		</div>
 		<div class="utility-links">
 			<div class="lang-switcher" aria-label={t.languageLabel}>
-				{LOCALES.map((locale) => {
+				{LOCALES.map((locale, index) => {
 					const url = translations?.[locale];
+					const sep =
+						index > 0 ? (
+							<span class="lang-sep" aria-hidden="true">/</span>
+						) : null;
 					if (locale === activeLocale) {
 						return (
-							<span class="lang-active" aria-current="page" lang={HTML_LANG[locale]}>
-								{LOCALE_LABELS[locale]}
-							</span>
+							<>
+								{sep}
+								<span class="lang-active" aria-current="page" lang={HTML_LANG[locale]}>
+									{LOCALE_LABELS[locale]}
+								</span>
+							</>
 						);
 					}
 					if (url) {
 						return (
-							<a href={url} hreflang={HTML_LANG[locale]} lang={HTML_LANG[locale]}>
-								{LOCALE_LABELS[locale]}
-							</a>
+							<>
+								{sep}
+								<a href={url} hreflang={HTML_LANG[locale]} lang={HTML_LANG[locale]}>
+									{LOCALE_LABELS[locale]}
+								</a>
+							</>
 						);
 					}
 					return (
-						<span
-							class="lang-unavailable"
-							aria-disabled="true"
-							title={t.unavailableTitle}
-							lang={HTML_LANG[locale]}
-						>
-							{LOCALE_LABELS[locale]}
-						</span>
+						<>
+							{sep}
+							<span
+								class="lang-unavailable"
+								aria-disabled="true"
+								title={t.unavailableTitle}
+								lang={HTML_LANG[locale]}
+							>
+								{LOCALE_LABELS[locale]}
+							</span>
+						</>
 					);
 				})}
 			</div>
@@ -192,6 +211,10 @@ const homeHref = localeHref(activeLocale, '/');
 		color: var(--ink-muted);
 		opacity: 0.4;
 		cursor: not-allowed;
+	}
+	.lang-switcher .lang-sep {
+		color: var(--ink-muted);
+		opacity: 0.5;
 	}
 	.social-links {
 		display: flex;

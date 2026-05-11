@@ -9,10 +9,7 @@ import HomePageBody from '../components/pages/HomePageBody.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { DEFAULT_LOCALE, HTML_LANG } from '../i18n/config';
 
-const translations = {
-	en: '/',
-	zh: '/zh/',
-} as const;
+const translations = { en: '/' } as const;
 const alternates = (Object.entries(translations) as Array<[keyof typeof translations, string]>).map(
 	([locale, path]) => ({
 		locale,

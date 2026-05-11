@@ -24,6 +24,7 @@ meta.md     The spec of specs
 | ID | File | Summary |
 | --- | --- | --- |
 | DR-000 | [000-spec-structure-format.md](decisions/000-spec-structure-format.md) | Spec structure, format, and naming conventions |
+| DR-001 | [001-multi-language.md](decisions/001-multi-language.md) | Site-wide multi-language support: locale subdirectories, Astro i18n routing, shared message modules |
 
 ## Iterations
 

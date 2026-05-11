@@ -10,6 +10,8 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { DEFAULT_LOCALE, stripLocaleFromId } from '../../i18n/config';
 
+const translations = { en: '/engineering/' } as const;
+
 const posts = (await getCollection('ref'))
 	.map((post) => {
 		const parsed = stripLocaleFromId(post.id);
@@ -24,7 +26,11 @@ const posts = (await getCollection('ref'))
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title="Engineering" description="Tooling, architecture, and specification practice for AI-powered software development." />
+		<BaseHead
+			title="Engineering"
+			description="Tooling, architecture, and specification practice for AI-powered software development."
+			lang={DEFAULT_LOCALE}
+		/>
 		<style>
 			.page-intro {
 				max-width: 720px;
@@ -85,7 +91,7 @@ const posts = (await getCollection('ref'))
 		</style>
 	</head>
 	<body>
-		<Header />
+		<Header lang={DEFAULT_LOCALE} translations={translations} />
 		<main>
 			<section class="page-intro">
 				<span class="eyebrow">Engineering</span>

@@ -1,0 +1,44 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
+
+import type { Locale } from '../../i18n/config';
+import { useTranslations } from '../../i18n/messages';
+
+interface Props {
+	lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang).home;
+---
+
+<main>
+	<section class="hero">
+		<div>
+			<span class="tag">{t.tag}</span>
+			<h1>{t.headline}</h1>
+			<p>{t.description}</p>
+			<div class="hero-actions">
+				<a class="button primary" href={t.ctaPrimaryHref}>{t.ctaPrimary}</a>
+				<a class="button" href="https://github.com/sublang-ai" target="_blank" rel="noopener noreferrer">
+					{t.ctaGitHub}
+				</a>
+				<a class="button" href="https://x.com/sublang_ai" target="_blank" rel="noopener noreferrer">
+					{t.ctaX}
+				</a>
+			</div>
+		</div>
+		<div class="card">
+			<h4>{t.focusTitle}</h4>
+			<ul class="list">
+				{t.focus.map((item) => (
+					<li>
+						<span class="eyebrow">{item.label}</span>
+						<p>{item.body}</p>
+					</li>
+				))}
+			</ul>
+		</div>
+	</section>
+</main>

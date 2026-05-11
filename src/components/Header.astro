@@ -13,6 +13,7 @@ import {
 	localeHref,
 	type Locale,
 } from '../i18n/config';
+import { isRouteAvailable } from '../i18n/availability';
 import { useTranslations } from '../i18n/messages';
 
 interface Props {
@@ -27,8 +28,13 @@ interface Props {
 const { lang, translations } = Astro.props;
 const activeLocale: Locale = lang ?? DEFAULT_LOCALE;
 const t = useTranslations(activeLocale).nav;
+
+type NavItem = { path: string; label: string };
+const navItems: NavItem[] = [
+	{ path: '/', label: t.home },
+	{ path: '/engineering/', label: t.engineering },
+];
 const homeHref = localeHref(activeLocale, '/');
-const engineeringHref = localeHref(activeLocale, '/engineering/');
 ---
 
 <header class="site-header">
@@ -44,8 +50,15 @@ const engineeringHref = localeHref(activeLocale, '/engineering/');
 			/>
 		</a>
 		<div class="internal-links" aria-label="Primary navigation">
-			<HeaderLink href={homeHref}>{t.home}</HeaderLink>
-			<HeaderLink href={engineeringHref}>{t.engineering}</HeaderLink>
+			{navItems.map((item) =>
+				isRouteAvailable(item.path, activeLocale) ? (
+					<HeaderLink href={localeHref(activeLocale, item.path)}>{item.label}</HeaderLink>
+				) : (
+					<span class="nav-unavailable" aria-disabled="true" title={t.unavailableTitle}>
+						{item.label}
+					</span>
+				),
+			)}
 		</div>
 		<div class="utility-links">
 			<div class="lang-switcher" aria-label={t.languageLabel}>
@@ -143,6 +156,11 @@ const engineeringHref = localeHref(activeLocale, '/engineering/');
 	}
 	.internal-links a.active {
 		color: var(--ink);
+	}
+	.internal-links .nav-unavailable {
+		color: var(--ink-muted);
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 	.utility-links {
 		display: flex;

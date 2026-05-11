@@ -3,6 +3,16 @@
 // SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
 
 import { SITE_GA_CONSENT_KEY, SITE_GA_ID } from '../consts';
+import { DEFAULT_LOCALE, type Locale } from '../i18n/config';
+import { useTranslations } from '../i18n/messages';
+
+interface Props {
+	lang?: Locale;
+}
+
+const { lang } = Astro.props;
+const activeLocale: Locale = lang ?? DEFAULT_LOCALE;
+const c = useTranslations(activeLocale).consent;
 
 const gaId = (import.meta.env.PUBLIC_GA_ID ?? SITE_GA_ID)?.trim() ?? '';
 const gaEnabled = gaId.length > 0;
@@ -21,10 +31,10 @@ const consentKeyLiteral = JSON.stringify(consentKey);
 			aria-live="polite"
 		>
 			<div class="consent-card">
-				<p class="consent-text">Help us improve your experience. Allow anonymous analytics.</p>
+				<p class="consent-text">{c.text}</p>
 				<div class="consent-actions">
-					<button class="button primary" type="button" data-ga-accept>Yes</button>
-					<button class="button" type="button" data-ga-reject>No</button>
+					<button class="button primary" type="button" data-ga-accept>{c.accept}</button>
+					<button class="button" type="button" data-ga-reject>{c.reject}</button>
 				</div>
 			</div>
 		</div>

@@ -3,25 +3,44 @@
 // SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
 
 import ConsentBanner from './ConsentBanner.astro';
+import { DEFAULT_LOCALE, type Locale, localeHref } from '../i18n/config';
+import { isRouteAvailable } from '../i18n/availability';
+import { useTranslations } from '../i18n/messages';
 
+interface Props {
+	lang?: Locale;
+}
+
+const { lang } = Astro.props;
+const activeLocale: Locale = lang ?? DEFAULT_LOCALE;
+const t = useTranslations(activeLocale);
+const nav = t.nav;
+const f = t.footer;
 const today = new Date();
+const engineeringAvailable = isRouteAvailable('/engineering/', activeLocale);
 ---
 
 <footer class="site-footer">
 	<div class="footer-inner">
 		<div>
-			<div class="eyebrow">SubLang International</div>
-			<p class="muted">Language tools, reference essays, and engineering notes.</p>
+			<div class="eyebrow">{f.orgName}</div>
+			<p class="muted">{f.tagline}</p>
 		</div>
 		<div class="footer-links">
-			<a href="https://github.com/sublang-ai" target="_blank" rel="noopener noreferrer">GitHub</a>
-			<a href="https://x.com/sublang_ai" target="_blank" rel="noopener noreferrer">X / Twitter</a>
-			<a href="/engineering/">Engineering</a>
+			<a href="https://github.com/sublang-ai" target="_blank" rel="noopener noreferrer">{f.linkGitHub}</a>
+			<a href="https://x.com/sublang_ai" target="_blank" rel="noopener noreferrer">{f.linkX}</a>
+			{engineeringAvailable ? (
+				<a href={localeHref(activeLocale, '/engineering/')}>{f.linkEngineering}</a>
+			) : (
+				<span class="link-unavailable" aria-disabled="true" title={nav.unavailableTitle}>
+					{f.linkEngineering}
+				</span>
+			)}
 		</div>
 	</div>
-	<div class="footer-meta">&copy; {today.getFullYear()} SubLang International.</div>
+	<div class="footer-meta">{f.copyright(today.getFullYear())}</div>
 </footer>
-<ConsentBanner />
+<ConsentBanner lang={activeLocale} />
 <style>
 	.site-footer {
 		padding: 3.5rem 2rem 4rem;
@@ -51,6 +70,11 @@ const today = new Date();
 	}
 	.footer-links a:hover {
 		color: var(--accent);
+	}
+	.footer-links .link-unavailable {
+		color: var(--ink-muted);
+		opacity: 0.4;
+		cursor: not-allowed;
 	}
 	.footer-meta {
 		max-width: var(--grid-max);

@@ -35,4 +35,17 @@ export const messages: Messages = {
 			},
 		],
 	},
+	footer: {
+		orgName: 'SubLang International',
+		tagline: '语言工具、参考文章与工程笔记。',
+		linkGitHub: 'GitHub',
+		linkX: 'X / Twitter',
+		linkEngineering: '工程笔记',
+		copyright: (year: number) => `© ${year} SubLang International.`,
+	},
+	consent: {
+		text: '帮助我们改善你的体验。允许匿名分析数据。',
+		accept: '允许',
+		reject: '拒绝',
+	},
 };

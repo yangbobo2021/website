@@ -33,6 +33,19 @@ export const messages = {
 			},
 		],
 	},
+	footer: {
+		orgName: 'SubLang International',
+		tagline: 'Language tools, reference essays, and engineering notes.',
+		linkGitHub: 'GitHub',
+		linkX: 'X / Twitter',
+		linkEngineering: 'Engineering',
+		copyright: (year: number) => `© ${year} SubLang International.`,
+	},
+	consent: {
+		text: 'Help us improve your experience. Allow anonymous analytics.',
+		accept: 'Yes',
+		reject: 'No',
+	},
 } as const;
 
 export type Messages = typeof messages;

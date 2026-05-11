@@ -80,11 +80,17 @@ const iconMap = {
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? canonicalURL.origin;
 
+const otherTranslations = alternates?.filter((alt) => alt.locale !== activeLocale) ?? [];
+const originalLocaleAlt =
+	activeLocale !== DEFAULT_LOCALE
+		? alternates?.find((alt) => alt.locale === DEFAULT_LOCALE)
+		: undefined;
 const articleSchema = {
 	'@context': 'https://schema.org',
 	'@type': 'BlogPosting',
 	headline: title,
 	description,
+	inLanguage: HTML_LANG[activeLocale],
 	datePublished: pubDate.toISOString(),
 	dateModified: (updatedDate ?? pubDate).toISOString(),
 	author: {
@@ -101,6 +107,26 @@ const articleSchema = {
 		'@id': canonicalURL.toString(),
 	},
 	...(postImage ? { image: new URL(postImage.src, Astro.url).toString() } : {}),
+	...(activeLocale === DEFAULT_LOCALE && otherTranslations.length > 0
+		? {
+				workTranslation: otherTranslations.map((alt) => ({
+					'@type': 'BlogPosting',
+					'@id': alt.href,
+					url: alt.href,
+					inLanguage: HTML_LANG[alt.locale],
+				})),
+			}
+		: {}),
+	...(originalLocaleAlt
+		? {
+				translationOfWork: {
+					'@type': 'BlogPosting',
+					'@id': originalLocaleAlt.href,
+					url: originalLocaleAlt.href,
+					inLanguage: HTML_LANG[DEFAULT_LOCALE],
+				},
+			}
+		: {}),
 };
 ---
 

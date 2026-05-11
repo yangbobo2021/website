@@ -43,7 +43,7 @@ Regional variants (`zh-hans`, `pt-br`) are allowed when needed but not used by d
 ### Routing
 
 - Use Astro's built-in `i18n` config [[1]] with `defaultLocale: 'en'`, `locales: ['en', 'zh']`, and `routing.prefixDefaultLocale: false`.
-- Resulting URL shape:
+- Resulting URL shape for any surface in which a given locale has been opted in:
 
   | Surface | Default (`en`) | Other (`zh`) |
   | --- | --- | --- |
@@ -52,6 +52,9 @@ Regional variants (`zh-hans`, `pt-br`) are allowed when needed but not used by d
   | Collection post | `/ref/foo` | `/zh/ref/foo` |
   | Collection index | `/ref/` | `/zh/ref/` |
   | RSS | `/rss.xml` | `/zh/rss.xml` |
+
+  The table shows *possible* URLs once a translation exists.
+Per the "no fake equivalents" rule (see Language switcher and Cross-route navigation links below), a `/<locale>/<path>/` URL is only built when its translation has been opted in for that specific page; locales without an opt-in produce no URL for that surface.
 
 - All internal links shall be built with `getRelativeLocaleUrl(lang, path)` so the prefix is added or omitted per the routing rule.
 - The current locale is read from `Astro.currentLocale` and falls back to `defaultLocale`.
@@ -79,7 +82,7 @@ Concretely, for `src/content/ref/en/foo.md` (`id = "en/foo"`), the default-local
 - A single `[locale]` arm covers every non-default locale for a given page: a sibling at `src/pages/[locale]/<path>.astro` handles all non-default locales for which that page has actually been translated.
 Its `getStaticPaths` shall return only the locales whose translation has been opted in for that page, not every entry of `locales` minus `defaultLocale`.
 This is the "no fake equivalents" rule: a `/<locale>/<path>/` is built only when its translation exists, so visitors never land on a `/<locale>/` URL filled with default-locale fallback content.
-For example, `src/pages/[locale]/index.astro` currently opts in `['zh']` and produces `/zh/` but not `/<other>/`.
+As of this writing, no static page has a non-default-locale opt-in, so no `src/pages/[locale]/...` static-page wrapper file currently exists; the pattern is reserved for when a translated static page is added.
 - Both the default and `[locale]` versions of a page are thin wrappers that render a shared `<PageBody>` component in `src/components/pages/`, passing `lang` (from `Astro.currentLocale`) and any data; the wrapper exists only to anchor the URL.
 - Page-specific text not sourced from content collections is read from the i18n message modules (see below), keyed by page.
 - Pages that are intentionally locale-agnostic (e.g., pure redirect endpoints, the default-locale `rss.xml.js`) remain at `src/pages/` without a locale segment.

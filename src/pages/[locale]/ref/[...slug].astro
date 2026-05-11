@@ -1,0 +1,62 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
+
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BlogPost from '../../../layouts/BlogPost.astro';
+import {
+	LOCALES,
+	NON_DEFAULT_LOCALES,
+	type Locale,
+	stripLocaleFromId,
+} from '../../../i18n/config';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('ref');
+
+	const translationLocales = new Map<string, Set<Locale>>();
+	const byLocale: Record<Locale, Array<{ entry: CollectionEntry<'ref'>; slug: string }>> = {
+		en: [],
+		zh: [],
+	};
+	for (const entry of entries) {
+		const parsed = stripLocaleFromId(entry.id);
+		if (!parsed) continue;
+		byLocale[parsed.locale].push({ entry, slug: parsed.slug });
+		const set = translationLocales.get(parsed.slug) ?? new Set<Locale>();
+		set.add(parsed.locale);
+		translationLocales.set(parsed.slug, set);
+	}
+
+	return NON_DEFAULT_LOCALES.flatMap((locale) =>
+		byLocale[locale].map(({ entry, slug }) => ({
+			params: { locale, slug },
+			props: {
+				entry,
+				lang: locale,
+				availableLocales: LOCALES.filter((l) => translationLocales.get(slug)?.has(l)),
+				postSlug: slug,
+			},
+		})),
+	);
+}
+
+type Props = {
+	entry: CollectionEntry<'ref'>;
+	lang: Locale;
+	availableLocales: readonly string[];
+	postSlug: string;
+};
+
+const { entry, lang, availableLocales, postSlug } = Astro.props as Props;
+const { Content } = await render(entry);
+---
+
+<BlogPost
+	{...entry.data}
+	lang={lang}
+	availableLocales={availableLocales}
+	postSlug={postSlug}
+>
+	<Content />
+</BlogPost>

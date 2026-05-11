@@ -4,7 +4,7 @@
 title: 'GEARS: the AI-Ready Spec Syntax'
 description: 'An introduction to Generalized EARS, the specification syntax designed for AI-powered software development'
 pubDate: 2026-01-14
-heroImage: ../../assets/gears-hero.png
+heroImage: ../../../assets/gears-hero.png
 heroImageAlt: 'Diagram of the GEARS specification lifecycle'
 devtoUrl: 'https://dev.to/sublang/gears-the-spec-syntax-that-makes-ai-coding-actually-work-4f3f'
 mediumUrl: 'https://medium.com/sublang/generalized-ears-the-ai-ready-spec-syntax-11ba36a37165'

@@ -4,20 +4,52 @@
 
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { DEFAULT_LOCALE, LOCALES, stripLocaleFromId } from '../../i18n/config';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('ref');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
+	const entries = await getCollection('ref');
+	const defaultEntries = entries
+		.map((entry) => {
+			const parsed = stripLocaleFromId(entry.id);
+			if (!parsed || parsed.locale !== DEFAULT_LOCALE) return null;
+			return { entry, slug: parsed.slug };
+		})
+		.filter((value): value is { entry: CollectionEntry<'ref'>; slug: string } => value !== null);
+
+	const translationSlugs = new Map<string, Set<string>>();
+	for (const entry of entries) {
+		const parsed = stripLocaleFromId(entry.id);
+		if (!parsed) continue;
+		const set = translationSlugs.get(parsed.slug) ?? new Set<string>();
+		set.add(parsed.locale);
+		translationSlugs.set(parsed.slug, set);
+	}
+
+	return defaultEntries.map(({ entry, slug }) => ({
+		params: { slug },
+		props: {
+			entry,
+			availableLocales: LOCALES.filter((locale) => translationSlugs.get(slug)?.has(locale)),
+			postSlug: slug,
+		},
 	}));
 }
-type Props = CollectionEntry<'ref'>;
 
-const post = Astro.props;
-const { Content } = await render(post);
+type Props = {
+	entry: CollectionEntry<'ref'>;
+	availableLocales: readonly string[];
+	postSlug: string;
+};
+
+const { entry, availableLocales, postSlug } = Astro.props as Props;
+const { Content } = await render(entry);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost
+	{...entry.data}
+	lang={DEFAULT_LOCALE}
+	availableLocales={availableLocales}
+	postSlug={postSlug}
+>
 	<Content />
 </BlogPost>

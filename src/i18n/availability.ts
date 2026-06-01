@@ -15,6 +15,7 @@ import { DEFAULT_LOCALE, type Locale } from './config';
 export const ROUTE_AVAILABILITY: Record<string, readonly Locale[]> = {
 	'/': ['en'],
 	'/engineering/': ['en'],
+	'/keysync/': ['en'],
 };
 
 export function isRouteAvailable(path: string, locale: Locale): boolean {

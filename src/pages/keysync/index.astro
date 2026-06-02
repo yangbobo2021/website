@@ -126,10 +126,10 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 						<div class="ks-sec-eyebrow">Config sprawl</div>
 						<h2 class="ks-sec-title">One provider profile. Every agent configured.</h2>
 						<ul class="ks-pain-list">
-							<li><span class="ks-x" aria-hidden="true">✕</span><span>Every tool wants its <b>own config file</b>, in its own format and location.</span></li>
-							<li><span class="ks-x" aria-hidden="true">✕</span><span>Rotate one key and you're <b>hand-editing six files</b> across every project and machine.</span></li>
-							<li><span class="ks-x" aria-hidden="true">✕</span><span>A bad edit can <b>break your setup mid-task</b> — with no easy way back.</span></li>
-							<li><span class="ks-x" aria-hidden="true">✕</span><span>New laptop? Start the whole <b>copy-paste ritual</b> from scratch.</span></li>
+							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>Every tool wants its <b>own config file</b>, in its own format and location.</span></li>
+							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>Rotate one key and you're <b>hand-editing six files</b> across every project and machine.</span></li>
+							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>A bad edit can <b>break your setup mid-task</b> — with no easy way back.</span></li>
+							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>New laptop? Start the whole <b>copy-paste ritual</b> from scratch.</span></li>
 						</ul>
 					</div>
 					<div class="ks-codecard">
@@ -236,23 +236,23 @@ model = <span class="s">"claude-opus-4"</span>
 					</div>
 					<div class="ks-faq">
 						<details open>
-							<summary>Which AI agents and tools does it support?<span class="ks-plus" aria-hidden="true">+</span></summary>
+							<summary>Which AI agents and tools does it support?<span class="ks-plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path class="ks-plus-bar" d="M12 5v14"></path></svg></span></summary>
 							<p>The ones you already run — Claude Code, Codex, OpenClaw, and Hermes, with more added regularly. KeySync writes each one's native config file, so support is really just about knowing the format.</p>
 						</details>
 						<details>
-							<summary>How are my API keys stored?<span class="ks-plus" aria-hidden="true">+</span></summary>
+							<summary>How are my API keys stored?<span class="ks-plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path class="ks-plus-bar" d="M12 5v14"></path></svg></span></summary>
 							<p>Keys are encrypted on your machine before they're ever uploaded. The cloud stores only encrypted data so your setup can follow you across devices — but your secrets stay yours.</p>
 						</details>
 						<details>
-							<summary>What if a sync breaks my config?<span class="ks-plus" aria-hidden="true">+</span></summary>
+							<summary>What if a sync breaks my config?<span class="ks-plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path class="ks-plus-bar" d="M12 5v14"></path></svg></span></summary>
 							<p>It won't silently. KeySync saves a local backup of each file before writing, and the apply report flags any device that didn't sync cleanly — so failures are visible rather than silent.</p>
 						</details>
 						<details>
-							<summary>Can I use custom endpoints or a local gateway?<span class="ks-plus" aria-hidden="true">+</span></summary>
+							<summary>Can I use custom endpoints or a local gateway?<span class="ks-plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path class="ks-plus-bar" d="M12 5v14"></path></svg></span></summary>
 							<p>Yes. Set a custom base URL per provider — a proxy, a self-hosted gateway, or a local model server — and KeySync points every tool at it.</p>
 						</details>
 						<details>
-							<summary>Do my agents need to change anything?<span class="ks-plus" aria-hidden="true">+</span></summary>
+							<summary>Do my agents need to change anything?<span class="ks-plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path class="ks-plus-bar" d="M12 5v14"></path></svg></span></summary>
 							<p>No. KeySync writes the same config files your agents already read. There's nothing for them to integrate with and nothing new to learn — KeySync is the key and config layer beneath them, not another agent.</p>
 						</details>
 					</div>
@@ -446,7 +446,7 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-hub-core {
 		width: 74px;
 		height: 74px;
-		border-radius: 18px;
+		border-radius: var(--radius-md);
 		display: grid;
 		place-items: center;
 		color: var(--surface);
@@ -470,7 +470,7 @@ model = <span class="s">"claude-opus-4"</span>
 		border: 1px solid var(--accent-soft);
 		background: var(--accent-soft);
 		padding: 0.25rem 0.6rem;
-		border-radius: 100px;
+		border-radius: 999px;
 	}
 	.ks-hub-backup svg { width: 11px; height: 11px; }
 
@@ -495,7 +495,7 @@ model = <span class="s">"claude-opus-4"</span>
 		flex-shrink: 0;
 		width: 30px;
 		height: 30px;
-		border-radius: 8px;
+		border-radius: var(--radius-sm);
 		display: grid;
 		place-items: center;
 		background: var(--surface);
@@ -539,10 +539,6 @@ model = <span class="s">"claude-opus-4"</span>
 		stroke: rgba(137, 15, 188, 0.45);
 		stroke-width: 1.4;
 		stroke-dasharray: 5 7;
-		animation: ks-dash 1.1s linear infinite;
-	}
-	@keyframes ks-dash {
-		to { stroke-dashoffset: -24; }
 	}
 
 	@media (max-width: 860px) {
@@ -553,11 +549,11 @@ model = <span class="s">"claude-opus-4"</span>
 
 	/* ---------- SECTION SHELL ---------- */
 	.ks-sec-eyebrow {
-		font-family: var(--ks-mono);
-		font-size: 0.74rem;
-		letter-spacing: 0.16em;
+		font-family: var(--font-display);
+		font-size: 0.72rem;
+		letter-spacing: 0.3em;
 		text-transform: uppercase;
-		color: var(--accent);
+		color: var(--ink-muted);
 		margin-bottom: 0.8rem;
 	}
 	.ks-sec-title {
@@ -602,16 +598,14 @@ model = <span class="s">"claude-opus-4"</span>
 		width: 22px;
 		height: 22px;
 		margin-top: 0.2rem;
-		border-radius: 6px;
+		border-radius: var(--radius-sm);
 		display: grid;
 		place-items: center;
 		background: var(--ks-danger-soft);
 		border: 1px solid rgba(192, 57, 43, 0.3);
 		color: var(--ks-danger);
-		font-family: var(--ks-mono);
-		font-weight: 700;
-		font-size: 0.78rem;
 	}
+	.ks-x svg { width: 12px; height: 12px; }
 
 	.ks-codecard {
 		overflow: hidden;
@@ -657,14 +651,14 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-codebody .s { color: var(--accent); }
 	.ks-codebody .old {
 		display: block;
-		border-radius: 5px;
+		border-radius: var(--radius-sm);
 		padding: 0 5px;
 		color: var(--ks-danger);
 		background: var(--ks-danger-soft);
 	}
 	.ks-codebody .new {
 		display: block;
-		border-radius: 5px;
+		border-radius: var(--radius-sm);
 		padding: 0 5px;
 		color: var(--accent-dark);
 		background: var(--accent-soft);
@@ -694,7 +688,7 @@ model = <span class="s">"claude-opus-4"</span>
 		width: 34px;
 		height: 34px;
 		margin-bottom: 1.1rem;
-		border-radius: 8px;
+		border-radius: var(--radius-sm);
 		border: 1px solid rgba(137, 15, 188, 0.3);
 		font-family: var(--ks-mono);
 		font-weight: 700;
@@ -709,7 +703,7 @@ model = <span class="s">"claude-opus-4"</span>
 		color: var(--ink);
 		background: rgba(21, 22, 26, 0.06);
 		padding: 1px 6px;
-		border-radius: 5px;
+		border-radius: 6px;
 	}
 
 	/* ---------- FEATURES ---------- */
@@ -738,7 +732,7 @@ model = <span class="s">"claude-opus-4"</span>
 		width: 46px;
 		height: 46px;
 		margin-bottom: 1.2rem;
-		border-radius: 12px;
+		border-radius: var(--radius-md);
 		background: var(--accent-soft);
 		border: 1px solid rgba(137, 15, 188, 0.2);
 		color: var(--accent);
@@ -771,7 +765,7 @@ model = <span class="s">"claude-opus-4"</span>
 		flex-shrink: 0;
 		width: 26px;
 		height: 26px;
-		border-radius: 8px;
+		border-radius: var(--radius-sm);
 		display: grid;
 		place-items: center;
 		background: var(--accent-soft);
@@ -804,7 +798,7 @@ model = <span class="s">"claude-opus-4"</span>
 		color: var(--accent);
 		border: 1px solid rgba(137, 15, 188, 0.3);
 		padding: 0.3rem 0.7rem;
-		border-radius: 100px;
+		border-radius: 999px;
 	}
 	.ks-imgslot p { font-size: 0.9rem; max-width: 34ch; margin: 0; }
 
@@ -838,12 +832,12 @@ model = <span class="s">"claude-opus-4"</span>
 		display: grid;
 		place-items: center;
 		border: 1px solid var(--line);
-		border-radius: 6px;
+		border-radius: var(--radius-sm);
 		color: var(--accent);
-		font-family: var(--ks-mono);
-		transition: transform 0.25s ease;
 	}
-	.ks-faq details[open] .ks-plus { transform: rotate(45deg); }
+	.ks-plus svg { width: 14px; height: 14px; }
+	.ks-plus-bar { transition: opacity 0.2s ease; }
+	.ks-faq details[open] .ks-plus-bar { opacity: 0; }
 	.ks-faq details p {
 		margin: 0;
 		padding: 0 0.25rem 1.2rem;
@@ -900,8 +894,7 @@ model = <span class="s">"claude-opus-4"</span>
 		.ks-trust { gap: 0.8rem 1.2rem; }
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.ks-dot,
-		.ks-flow line { animation: none; }
+		.ks-dot { animation: none; }
 	}
 </style>
 </html>

@@ -312,15 +312,12 @@ model = <span class="s">"claude-opus-4"</span>
 		border-top: none;
 		padding: 4.5rem 0 4rem;
 		text-align: center;
-		background:
-			radial-gradient(900px 380px at 50% -10%, rgba(137, 15, 188, 0.1), transparent 70%);
 	}
 	.ks-dot {
 		width: 7px;
 		height: 7px;
 		border-radius: 50%;
 		background: var(--accent);
-		box-shadow: 0 0 8px rgba(137, 15, 188, 0.7);
 		animation: ks-pulse 2s infinite;
 	}
 	@keyframes ks-pulse {
@@ -334,10 +331,7 @@ model = <span class="s">"claude-opus-4"</span>
 		margin: 1.4rem auto 1.3rem;
 	}
 	.ks-hl {
-		background: linear-gradient(120deg, var(--accent), var(--accent-dark));
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+		color: var(--accent);
 	}
 	.ks-sub {
 		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
@@ -393,13 +387,6 @@ model = <span class="s">"claude-opus-4"</span>
 		background: var(--surface);
 		padding: 1.8rem;
 		box-shadow: var(--shadow-soft);
-	}
-	.ks-stage-frame::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: radial-gradient(circle at 50% 0%, var(--accent-soft), transparent 60%);
-		pointer-events: none;
 	}
 	.ks-stage-grid {
 		position: relative;
@@ -463,13 +450,7 @@ model = <span class="s">"claude-opus-4"</span>
 		display: grid;
 		place-items: center;
 		color: var(--surface);
-		background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-		box-shadow: 0 0 0 6px rgba(137, 15, 188, 0.08), 0 12px 30px rgba(137, 15, 188, 0.28);
-		animation: ks-glow 4s ease-in-out infinite;
-	}
-	@keyframes ks-glow {
-		0%, 100% { box-shadow: 0 0 0 6px rgba(137, 15, 188, 0.08), 0 12px 30px rgba(137, 15, 188, 0.24); }
-		50% { box-shadow: 0 0 0 10px rgba(137, 15, 188, 0.05), 0 16px 44px rgba(137, 15, 188, 0.4); }
+		background: var(--accent);
 	}
 	.ks-hub-core svg { width: 34px; height: 34px; }
 	.ks-hub-name {
@@ -594,9 +575,6 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-mx-auto { margin-left: auto; margin-right: auto; }
 
 	/* ---------- PROBLEM ---------- */
-	.ks-problem {
-		background: linear-gradient(180deg, rgba(137, 15, 188, 0.035), transparent 60%);
-	}
 	.ks-problem-grid {
 		display: grid;
 		grid-template-columns: 1.1fr 1fr;
@@ -735,9 +713,6 @@ model = <span class="s">"claude-opus-4"</span>
 	}
 
 	/* ---------- FEATURES ---------- */
-	.ks-features {
-		background: linear-gradient(180deg, rgba(137, 15, 188, 0.035), transparent 60%);
-	}
 	.ks-feat-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
@@ -773,9 +748,6 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-feat p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
 
 	/* ---------- SECURITY ---------- */
-	.ks-security {
-		background: linear-gradient(180deg, transparent, rgba(137, 15, 188, 0.035));
-	}
 	.ks-sec-split {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
@@ -893,13 +865,6 @@ model = <span class="s">"claude-opus-4"</span>
 		padding: 4rem 2.5rem;
 		box-shadow: var(--shadow-soft);
 	}
-	.ks-final-card::before {
-		content: "";
-		position: absolute;
-		inset: 0;
-		background: radial-gradient(ellipse 70% 100% at 50% 0%, var(--accent-soft), transparent 60%);
-		pointer-events: none;
-	}
 	.ks-final-card h2 {
 		max-width: 16ch;
 		margin: 0 auto 1.1rem;
@@ -936,7 +901,6 @@ model = <span class="s">"claude-opus-4"</span>
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.ks-dot,
-		.ks-hub-core,
 		.ks-flow line { animation: none; }
 	}
 </style>

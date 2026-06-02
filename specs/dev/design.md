@@ -5,13 +5,13 @@
 
 ## Intent
 
-This spec is the canonical, authoritative definition of the SubLang website's visual design system:
-color, typography, spacing, radii, elevation, surfaces, the shared component grammar (buttons, cards, tags, links), page chrome, logo and iconography usage, and motion.
+This spec is the canonical, complete, and faithful definition of the SubLang website's visual design system:
+color, typography, spacing, radii, elevation, surfaces, base elements, the shared component grammar (buttons, cards, tags, links), layout primitives, page chrome, logo and iconography usage, and motion.
 It is the single source of truth for these decisions; no external brand document governs them.
 
-It records the as-built site — `src/styles/global.css` and the shared `Header`, `Footer`, and `BaseHead` components — as one auditable system.
-The warm light surface and component grammar are kept, and selected brand ideas are adopted where they improve the result: the deep-purple ink, the three-tone purple (with the bright `#A416EF` pop and a focus ring), a tokenized machine voice, warm-tinted elevation, and a disciplined motion vocabulary.
-Adoption is deliberate and partial — the system does not require wholesale brand conformance, since a full brand pass was tried on this site and judged worse.
+It describes the site as built — `src/styles/global.css` and the shared `Header`, `Footer`, and `BaseHead` components — at the values it actually ships, so that following this spec reproduces the site's look.
+The system favors a warm, restrained light surface: cream paper, dark ink, brand purple used sparingly, hairline borders, soft shadows, and spare motion.
+A full brand-conformance pass was attempted and judged worse for this site, so the system stays close to this as-built design rather than a stricter brand ideal.
 
 Brand assets named here — the wordmark and monogram (`src/assets/brand/`) and the Euclid Circular A fonts (`public/fonts/`) — live in the repository; brand voice and editorial-content rules are out of scope for this spec.
 
@@ -22,29 +22,28 @@ they are defined in the Color and Typography sections and referenced by later it
 
 ### DESIGN-1
 
-The color system shall define the brand purple triad as three fixed values:
+The color system shall define two brand purples:
 
 | Token | Value | Name |
 | --- | --- | --- |
-| `--accent-dark` | `#27063D` | Deep |
-| `--accent` | `#890FBC` | Mid |
-| `--accent-bright` | `#A416EF` | Bright |
+| `--accent` | `#890FBC` | brand purple |
+| `--accent-dark` | `#27063D` | deep purple |
 
-The triad is the brand's central idea — the two-tone wordmark splits deep "SUB" from bright "LANG"; every accent choice points back to that split.
+`--accent-dark` is the dark half of the two-tone wordmark; `--accent` is the single purple that stands for the brand in UI.
 
 ### DESIGN-2
 
-The design system shall assign the triad these roles:
+The design system shall assign the purples these roles:
 
 | Role | Token |
 | --- | --- |
-| Primary brand color — primary CTAs, links, active marks | `--accent` |
-| Decoration and energy — focus rings, highlights, hero glow | `--accent-bright` |
-| Ink and the dark surface | `--accent-dark` |
+| The brand color — primary CTAs, links, active marks, hover accents, tag text, blockquote rule | `--accent` |
+| Deepest brand purple — primary-button hover/active fill | `--accent-dark` |
 
 ### DESIGN-3
 
-Where a foreground element is at body-text size on a light surface, the design system shall use `--accent` or an ink tone and shall not use `--accent-bright` (`#A416EF`), which does not meet WCAG AA contrast for small text on white [[2]].
+Where a foreground element is at body-text size on a light surface, it shall use an ink tone or `--accent`.
+`--accent` (`#890FBC`) is the lightest purple permitted at body size — it clears WCAG AA contrast on white [[2]] — and lighter or more-saturated purples shall not be used for small text.
 
 ### DESIGN-4
 
@@ -52,15 +51,14 @@ The neutral surface palette shall be warm: `--bg` `#F7F4EF` (paper), `--surface`
 
 ### DESIGN-5
 
-Text shall use the deep brand purple as its darkest tone, never pure black: `--ink` `#27063D` (headings, emphasis, primary text), `--ink-soft` `#4A4F5A` (body prose), `--ink-muted` `#6C717B` (captions, metadata).
+Text shall use the ink scale: `--ink` `#15161A` (headings, emphasis, primary text), `--ink-soft` `#4A4F5A` (body prose), `--ink-muted` `#6C717B` (captions, metadata).
 
 ## Typography
 
 ### DESIGN-6
 
-The display and body typeface shall be Euclid Circular A, self-hosted, in weights 400/500/600/700 with matching italics (300 available), exposed as `--font-display` and `--font-body`.
-The machine voice — code, identifiers, eyebrows, status chips — shall be exposed as a `--font-mono` token whose value is a system-monospace stack (`ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace`).
-JetBrains Mono is the preferred machine-voice face; where it is adopted it shall be self-hosted alongside Euclid (no third-party font CDN) and prepended to `--font-mono`, leaving the system stack as the fallback.
+The display and body typeface shall be Euclid Circular A, self-hosted, in weights 400/500/600/700 with matching italics, exposed as `--font-display` and `--font-body`.
+Code and identifiers shall use a `--font-mono` system-monospace stack: `"SFMono-Regular", "Consolas", "Liberation Mono", monospace`.
 
 ### DESIGN-7
 
@@ -73,7 +71,7 @@ Line-height shall be `1.1` for headings and `1.7` for body.
 
 ### DESIGN-9
 
-Headings shall carry tight tracking (`letter-spacing: -0.02em`, tightest on the largest display sizes).
+Headings shall carry tight tracking (`letter-spacing: -0.02em`), and `h4` shall additionally be uppercase tracked `0.14em`.
 Eyebrows, tags, and nav labels shall be uppercase with positive tracking: eyebrow `0.3em`, tag `0.12em`, nav `0.2em`.
 
 ### DESIGN-10
@@ -91,6 +89,10 @@ The primary content column shall be centered with `max-width: var(--grid-max)` (
 
 Top-level sections shall be separated by at least `3.5rem` of vertical space and a single `1px` `--line` hairline (`.section`); the first section shall omit its top border.
 
+### DESIGN-33
+
+The layout primitives shall be: `.hero` a single-column grid (`minmax(0, 1fr)`) with `2rem` gaps and `5rem 0 4rem` padding, whose `.hero-actions` is a wrapping flex row with `1rem` gaps; `.grid` an auto-fit grid of `minmax(240px, 1fr)` tracks with `2rem` gaps; `.split` an auto-fit grid of `minmax(280px, 1fr)` tracks, vertically centered; and `.list` an unstyled grid with `1.5rem` gaps.
+
 ## Radii
 
 ### DESIGN-13
@@ -101,11 +103,11 @@ Corner radii shall be `--radius-sm` `8px`, `--radius-md` `14px`, and `--radius-l
 
 ### DESIGN-14
 
-Shadows shall be soft and warm-tinted with the deep brand purple: `--shadow-soft` = `0 24px 60px rgba(39, 6, 61, 0.12)`, and cards shall use `0 18px 40px rgba(39, 6, 61, 0.08)`.
+Shadows shall be soft and tinted with near-black `rgba(21, 22, 26, …)`: `--shadow-soft` = `0 24px 60px rgba(21, 22, 26, 0.12)`, and cards shall use `0 18px 40px rgba(21, 22, 26, 0.08)`.
 
 ### DESIGN-15
 
-Hairlines (`1px` `--line`) shall be the default separator, and a heavy shadow and a heavy border shall not be combined on the same element.
+Hairlines (`1px` `--line`) shall be the default separator; a card may pair a hairline border with a soft shadow, but a heavy shadow and a heavy border shall not be combined on one element.
 
 ## Surfaces and background
 
@@ -117,13 +119,14 @@ Product and marketing surfaces — hero treatments, gradient text emphasis, and 
 
 ### DESIGN-17
 
-Where a hero mark sits on a deep (`--accent-dark`) surface, a single `--accent-bright` glow shall be permitted behind it; no other element shall carry a decorative glow.
+The site shall be a single light theme: page and panel background surfaces shall be `--bg` paper or `--surface` white, and the system shall define no dark or inverse page surface (no dark mode, no dark section bands).
+Component fills and product accents are not page surfaces and are exempt — for example the primary button's `--ink` fill ([DESIGN-18](#design-18)) and product-diagram accent nodes and glows ([DESIGN-16](#design-16)).
 
 ## Components
 
 ### DESIGN-18
 
-Buttons shall render as a full pill with a `1px` border, an uppercase label in the display family tracked `0.08em`, and no bottom-border underline.
+Buttons shall render as a full pill with `0.85rem 1.6rem` padding, a `1px` border, an uppercase label in the display family tracked `0.08em`, and no bottom-border underline.
 The default button shall be transparent with `--ink` text and border;
 the primary button shall fill with `--ink`, use `--surface` text, and carry `--shadow-soft`.
 
@@ -135,22 +138,34 @@ Button state changes shall alter real colors and shall not use opacity.
 
 ### DESIGN-20
 
-When an interactive control receives `:focus-visible`, it shall show a bright focus ring `box-shadow: 0 0 0 3px rgba(164, 22, 239, 0.38)` and shall not rely on the browser default outline alone.
+On `:focus-visible`, interactive controls — links, `button`, `.button`, `summary`, and form fields (`input`, `textarea`, `select`) — shall show one consistent focus ring: a `2px` solid `--accent` outline at `2px` offset.
+The ring shall use `outline` (not `box-shadow` alone) so it survives forced-colors mode, and the default focus outline shall not be removed unless replaced by this ring.
 
 ### DESIGN-21
 
-Cards (`.card`) shall fill with `--surface`, carry a `1px` `--line` border and `--radius-lg`, pad `1.8rem`, and use the soft warm card shadow from [DESIGN-14](#design-14).
-When hovered, a card shall either lift slightly (`translateY`) or darken its border, not both (see [DESIGN-15](#design-15)).
+Cards (`.card`) shall fill with `--surface`, carry a `1px` `--line` border and `--radius-lg`, pad `1.8rem`, and use the soft card shadow from [DESIGN-14](#design-14).
+An interactive card shall, on hover, lift by a few pixels (`translateY`) and shift its border toward `--accent`.
 
 ### DESIGN-22
 
-Tags (`.tag`) shall be pills filled `--accent-soft` with `--accent-dark` text, uppercase and tracked `0.12em`.
-Eyebrows (`.eyebrow`) shall be uppercase `--ink-muted` tracked `0.3em` in the machine-voice family.
+Tags (`.tag`) shall be pills filled `--accent-soft` with `--accent-dark` text, uppercase and tracked `0.12em`, in the display family.
+Eyebrows (`.eyebrow`) shall be uppercase `--ink-muted` text at `0.72rem` tracked `0.3em`.
 
 ### DESIGN-23
 
-Inline links shall carry a `1px` bottom-border underline at rest and shift their text and underline to `--accent` on hover without an opacity change.
+Inline links shall carry a `1px` bottom-border underline at rest (a faint ink rule) and shift their text and underline to `--accent` on hover without an opacity change.
 A link that wraps a card or block shall opt out of the underline.
+
+## Content elements
+
+### DESIGN-31
+
+Inline code (`code`) shall use `--font-mono` at `0.9em` on a `rgba(21, 22, 26, 0.08)` fill with `6px` radius and `2px 6px` padding.
+Preformatted blocks (`pre`) shall pad `1.5em`, use `--radius-md` and a `rgba(21, 22, 26, 0.06)` fill, and reset any nested `code` to inherit.
+
+### DESIGN-32
+
+Long-form content elements shall render as: `blockquote` — a `3px` `--accent` left rule, `20px` left padding, `--ink-soft` text at `1.1rem`; `table` — full width with a `1px` `--line` border on `--surface` and a `rgba(21, 22, 26, 0.04)` header row; `hr` — a single `1px` `--line` rule; and `img` — `--radius-sm` corners.
 
 ## Chrome
 
@@ -179,7 +194,7 @@ Emoji and unicode glyphs shall not be used as iconography.
 
 ### DESIGN-28
 
-Transitions shall use durations of `120ms`, `200ms`, or `320ms` with an ease-out curve.
+Transitions shall run at about `200ms` (`0.2s`) with an `ease` timing function.
 The motion vocabulary shall be limited to color and border changes, fades, and translations of at most `4px`;
 bounce, spring, scale-from-zero, and rotation shall not be used.
 
@@ -193,6 +208,12 @@ Where the user agent reports `prefers-reduced-motion: reduce`, looping and decor
 
 Where the viewport width is at most `900px`, `main` padding shall reduce to `3.5rem 1.5rem 5rem` and the hero top padding shall reduce.
 Where the viewport width is at most `720px`, the base font size shall be `16px`, buttons shall span the full container width, hero actions shall stack vertically, and the header social links shall be hidden.
+
+## Utilities
+
+### DESIGN-34
+
+Utility classes shall be: `.muted` — text in `--ink-muted`; and `.sr-only` — content removed from the visual layout while remaining available to assistive technology.
 
 ## References
 

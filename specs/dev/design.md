@@ -114,13 +114,12 @@ Hairlines (`1px` `--line`) shall be the default separator; a card may pair a hai
 ### DESIGN-16
 
 The page background shall be the warm paper `--bg` overlaid with two soft brand-tinted radial glows (top-left `rgba(137, 15, 188, 0.08)`, top-right `rgba(39, 6, 61, 0.06)`) and a white-to-cream vertical wash.
-Across global chrome and shared components — the header, the footer, `.card`, `.button`, and `.tag` — this ambient glow shall be the only gradient, and gradient washes shall not be used as their fills.
-Product and marketing surfaces — hero treatments, gradient text emphasis, and product diagrams — shall be allowed brand-tinted gradients as deliberate accents.
+This ambient page-background glow shall be the only gradient in the system; every other surface, fill, section band, and text treatment — across chrome, shared components, and product and marketing pages — shall use solid colors.
 
 ### DESIGN-17
 
 The site shall be a single light theme: page and panel background surfaces shall be `--bg` paper or `--surface` white, and the system shall define no dark or inverse page surface (no dark mode, no dark section bands).
-Component fills and product accents are not page surfaces and are exempt — for example the primary button's `--ink` fill ([DESIGN-18](#design-18)) and product-diagram accent nodes and glows ([DESIGN-16](#design-16)).
+Component fills and product accents are not page surfaces and are exempt — for example the primary button's `--ink` fill ([DESIGN-18](#design-18)) and product-diagram solid accent nodes ([DESIGN-16](#design-16)).
 
 ## Components
 

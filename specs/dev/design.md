@@ -37,7 +37,7 @@ The design system shall assign the purples these roles:
 
 | Role | Token |
 | --- | --- |
-| The brand color — primary CTAs, links, active marks, hover accents, tag text, blockquote rule | `--accent` |
+| The brand color — primary CTAs, links, active marks, hover accents, tag text, eyebrows, blockquote rule | `--accent` |
 | Deepest brand purple — primary-button hover/active fill | `--accent-dark` |
 
 ### DESIGN-3
@@ -148,7 +148,7 @@ An interactive card shall, on hover, lift by a few pixels (`translateY`) and shi
 ### DESIGN-22
 
 Tags (`.tag`) shall be pills filled `--accent-soft` with `--accent-dark` text, uppercase and tracked `0.12em`, in the display family.
-Eyebrows (`.eyebrow`) shall be uppercase `--ink-muted` text at `0.72rem` tracked `0.3em`.
+Eyebrows (`.eyebrow`) shall be uppercase `--accent` text at `0.72rem` tracked `0.3em`.
 
 ### DESIGN-23
 

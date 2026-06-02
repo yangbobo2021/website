@@ -34,6 +34,12 @@ meta.md     The spec of specs
 
 ## Packages
 
+### DESIGN
+
+| Group | File | Summary |
+| --- | --- | --- |
+| dev | [design.md](dev/design.md) | Visual design system: color, type, spacing, radii, elevation, components, chrome, logo/iconography, motion |
+
 ### GIT
 
 | Group | File | Summary |

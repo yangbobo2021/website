@@ -5,11 +5,15 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
+import { Image } from 'astro:assets';
+import keysyncScreenshot from '../../assets/keysync-screenshot.png';
+import providerDriftScreenshot from '../../assets/provider-drift.png';
 import { DEFAULT_LOCALE } from '../../i18n/config';
 
 const PAGE_TITLE = 'KeySync — One config for every AI agent';
 const PAGE_DESCRIPTION =
 	'KeySync is the key and config layer your AI agents read from. Keep your providers, keys, models, and endpoints in one place and sync them to every AI agent you run — encrypted across machines, with a local backup before every write.';
+const KEYSYNC_DOWNLOAD_URL = 'https://demo.signoff.bio/keysync/download';
 
 // English-only for now. The lang switcher reports other locales as
 // unavailable rather than inventing a fallback (DR-001, no fake equivalents).
@@ -38,16 +42,15 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 			<!-- HERO -->
 			<header class="ks-band ks-hero-band">
 				<div class="ks-wrap ks-hero">
-					<span class="tag"><span class="ks-dot" aria-hidden="true"></span>Key &amp; config sync for AI agents</span>
+					<span class="tag"><span class="ks-dot" aria-hidden="true"></span>Provider sync for AI agents</span>
 					<h1>Stop re-pasting API keys into <span class="ks-hl">every</span> AI agent.</h1>
 					<p class="ks-sub">
-						Keep your <b>providers, keys, models, and endpoints</b> in one provider profile, then sync
-						them to Claude Code, OpenClaw, Hermes, and the rest — <b>encrypted across every machine</b>,
-						with a <b>local backup before every write</b>.
+						Keep Claude Code, Codex, OpenClaw, and Hermes on the same provider
+						(<b>API keys, endpoints, and models</b>) across laptops and servers.
 					</p>
 					<div class="ks-cta-row">
-						<a href="#get-started" class="button primary">
-							Start syncing — free for a month
+						<a href={KEYSYNC_DOWNLOAD_URL} class="button primary">
+							Download KeySync
 							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 						</a>
 						<a href="#how" class="button">See how it works</a>
@@ -78,7 +81,6 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 										<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
 									</div>
 									<div class="ks-hub-name">KeySync</div>
-									<div class="ks-hub-backup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>backup saved</div>
 								</div>
 
 								<!-- RIGHT: tools -->
@@ -123,26 +125,21 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 			<section class="ks-band ks-problem">
 				<div class="ks-wrap ks-problem-grid">
 					<div>
-						<div class="ks-sec-eyebrow">Config sprawl</div>
-						<h2 class="ks-sec-title">One provider profile. Every agent configured.</h2>
+						<div class="ks-sec-eyebrow">Provider drift</div>
+						<h2 class="ks-sec-title">One provider setup. Every device caught up.</h2>
 						<ul class="ks-pain-list">
-							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>Every tool wants its <b>own config file</b>, in its own format and location.</span></li>
-							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>Rotate one key and you're <b>hand-editing six files</b> across every project and machine.</span></li>
-							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>A bad edit can <b>break your setup mid-task</b> — with no easy way back.</span></li>
-							<li><span class="ks-x" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></span><span>New laptop? Start the whole <b>copy-paste ritual</b> from scratch.</span></li>
+							<li><span class="ks-ck" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></span><span>You already use provider management tools such as CC Switch, but every <b>new laptop or server</b> starts behind.</span></li>
+							<li><span class="ks-ck" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Mac, Windows, Linux, desktop, notebook — the same API setup <b>drifts across devices</b>.</span></li>
+							<li><span class="ks-ck" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A teammate needs a key or endpoint, and you're <b>copying secrets through chat</b>.</span></li>
+							<li><span class="ks-ck" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></span><span>A provider hits a limit while you're away, but changing models means <b>opening the right machine</b>.</span></li>
 						</ul>
 					</div>
-					<div class="ks-codecard">
-						<div class="ks-codebar"><span class="ks-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="ks-fname">~/.codex/config.toml</span></div>
-						<pre class="ks-codebody"><span class="c"># before — edited by hand, again</span>
-[model_providers.openai]
-<span class="old">api_key = "sk-OLD-rotated-key…"</span>
-<span class="new">api_key = "sk-NEW-synced-by-keysync"</span>
-base_url = <span class="s">"https://api.proxy.dev/v1"</span>
-model = <span class="s">"claude-opus-4"</span>
-
-<span class="c"># the local client backed up the previous</span>
-<span class="c"># file to its backup manifest first</span></pre>
+					<div class="ks-proofshot">
+						<Image
+							src={providerDriftScreenshot}
+							alt="KeySync console showing different devices and apps bound to provider configurations"
+							class="ks-proofshot-img"
+						/>
 					</div>
 				</div>
 			</section>
@@ -171,36 +168,30 @@ model = <span class="s">"claude-opus-4"</span>
 							<p>KeySync writes each tool's native config for you. Change a key once and it lands in every tool, on every machine.</p>
 						</div>
 					</div>
-				</div>
-			</section>
 
-			<!-- FEATURES -->
-			<section class="ks-band ks-features" id="features">
-				<div class="ks-wrap">
-					<div class="ks-sec-head">
-						<div class="ks-sec-eyebrow">What you get</div>
-					</div>
-					<div class="ks-feat-grid">
-						<div class="ks-feat">
-							<div class="ks-feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v10M4.2 4.2l4.3 4.3m7 7 4.3 4.3M1 12h6m6 0h10"></path></svg></div>
-							<h3>One source of truth</h3>
-							<p>Keys, models, and endpoints live in one place. Rotate a key once and every tool updates — no more grepping through scattered config files.</p>
+					<div class="ks-guarantees" id="features" aria-label="What stays true after each sync">
+						<div class="ks-guarantees-head">
+							<div class="ks-sub-eyebrow">What stays true</div>
+							<p>Four guarantees carry through the workflow, no matter which provider or agent you connect.</p>
 						</div>
-						<div class="ks-feat">
-							<div class="ks-feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
-							<h3>Native to every agent</h3>
-							<p>KeySync writes each agent's own format and file location, so they just work — no wrappers, no proxies, nothing for them to learn.</p>
-						</div>
-						<div class="ks-feat">
-							<div class="ks-feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
-							<h3>Encrypted, everywhere</h3>
-							<p>Your keys are end-to-end encrypted on your device before they ever sync — the cloud only holds ciphertext. They follow you to every machine you sign in on.</p>
-						</div>
-						<div class="ks-feat">
-							<div class="ks-feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg></div>
-							<h3>Safe by default</h3>
-							<p>Every write is preceded by a local backup. Apply reports show which devices synced and which need attention — visible status instead of silent failure.</p>
-						</div>
+						<ul class="ks-guarantee-list">
+							<li>
+								<h3>One source of truth</h3>
+								<p>Keys, models, and endpoints live in one profile, so rotations happen once.</p>
+							</li>
+							<li>
+								<h3>Native to every agent</h3>
+								<p>KeySync writes each agent's own format and file location, with no wrapper to learn.</p>
+							</li>
+							<li>
+								<h3>Encrypted, everywhere</h3>
+								<p>Keys are encrypted on device before sync; the cloud only stores ciphertext.</p>
+							</li>
+							<li>
+								<h3>Safe by default</h3>
+								<p>Every write starts with a local backup, and apply reports show what synced.</p>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</section>
@@ -210,8 +201,8 @@ model = <span class="s">"claude-opus-4"</span>
 				<div class="ks-wrap ks-sec-split">
 					<div>
 						<div class="ks-sec-eyebrow">Built for handling secrets</div>
-						<h2 class="ks-sec-title">It's holding your keys. So it's built to earn that.</h2>
-						<p class="ks-sec-lead">KeySync is designed around one rule: it should never be the reason something broke or leaked.</p>
+						<h2 class="ks-sec-title">Sync keys without losing control.</h2>
+						<p class="ks-sec-lead">Secrets are encrypted before they leave your machine. Local configs are backed up before every write.</p>
 						<ul class="ks-check-list">
 							<li><span class="ks-ck" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></span><div><div class="t">Encrypted before it leaves your machine</div><div class="d">Your keys are encrypted client-side — the cloud only ever stores ciphertext.</div></div></li>
 							<li><span class="ks-ck" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"></path></svg></span><div><div class="t">Local backup before every write</div><div class="d">Each tool's existing config is saved locally first, so a sync can never silently overwrite your setup.</div></div></li>
@@ -221,8 +212,11 @@ model = <span class="s">"claude-opus-4"</span>
 					</div>
 					<!-- IMAGE SLOT: drop a real product screenshot here (e.g. the Web Console Providers list or the device status view) -->
 					<div class="ks-imgslot">
-						<span class="ks-badge">Image slot</span>
-						<p>Drop a real KeySync screenshot here — e.g. the Web Console Providers list or the device status view.</p>
+						<Image
+							src={keysyncScreenshot}
+							alt="KeySync web console screenshot showing synced provider configuration"
+							class="ks-shot"
+						/>
 					</div>
 				</div>
 			</section>
@@ -264,13 +258,13 @@ model = <span class="s">"claude-opus-4"</span>
 				<div class="ks-wrap">
 					<div class="ks-final-card">
 						<h2>Set it once. <span class="ks-hl">Sync it everywhere.</span></h2>
-						<p>Connect your first provider and push your config to every AI agent in under a minute.</p>
+						<p>Download the desktop client, connect your first provider, and push your config to every AI agent in under a minute.</p>
 						<div class="ks-cta-row ks-center">
-							<a href="#get-started" class="button primary">
-								Start syncing — free for a month
+							<a href={KEYSYNC_DOWNLOAD_URL} class="button primary">
+								Download KeySync
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 							</a>
-							<a href="#how" class="button">Read the docs</a>
+							<a href="#how" class="button">See how it works</a>
 						</div>
 						<div class="ks-run">$ ./keysync &nbsp;·&nbsp; requires Node.js 24+</div>
 					</div>
@@ -287,19 +281,27 @@ model = <span class="s">"claude-opus-4"</span>
 	   this page. */
 	.ks-main {
 		--ks-mono: var(--font-mono);
-		--ks-danger: #c0392b;
-		--ks-danger-soft: rgba(192, 57, 43, 0.09);
-		--ks-surface-2: #faf7f1;
+		--ks-page: #fdfcf9;
+		--ks-surface-2: #faf9f5;
+		--ks-line: #ece9e2;
+		--ks-shadow-card: 0 14px 34px rgba(21, 22, 26, 0.05);
+		--ks-shadow-float: 0 22px 56px rgba(21, 22, 26, 0.075);
+		--ks-accent-soft: rgba(137, 15, 188, 0.09);
 		width: 100%;
 		max-width: none;
 		margin: 0;
 		padding: 0;
+		background: var(--ks-page);
+	}
+	:global(.site-header) {
+		background: rgba(253, 252, 249, 0.86);
+		border-bottom-color: var(--ks-line);
 	}
 
 	/* Full-width section bands with a centered inner column. */
 	.ks-band {
 		padding: 5.5rem 0;
-		border-top: 1px solid var(--line);
+		border-top: 1px solid var(--ks-line);
 	}
 	.ks-wrap {
 		max-width: var(--grid-max);
@@ -325,8 +327,10 @@ model = <span class="s">"claude-opus-4"</span>
 		50% { opacity: 0.35; }
 	}
 	.ks-hero h1 {
-		font-size: clamp(2.5rem, 6vw, 4.4rem);
+		font-size: clamp(2.45rem, 5.5vw, 4.05rem);
+		font-weight: 600;
 		line-height: 1.04;
+		letter-spacing: -0.025em;
 		max-width: 16ch;
 		margin: 1.4rem auto 1.3rem;
 	}
@@ -334,9 +338,10 @@ model = <span class="s">"claude-opus-4"</span>
 		color: var(--accent);
 	}
 	.ks-sub {
-		font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+		font-size: clamp(1.03rem, 1.35vw, 1.16rem);
+		line-height: 1.58;
 		color: var(--ink-soft);
-		max-width: 60ch;
+		max-width: 55ch;
 		margin: 0 auto 2rem;
 	}
 	.ks-sub b {
@@ -358,8 +363,10 @@ model = <span class="s">"claude-opus-4"</span>
 		flex-wrap: wrap;
 		margin: 0;
 		padding: 0;
-		font-family: var(--ks-mono);
-		font-size: 0.82rem;
+		font-family: var(--font-display);
+		font-size: 0.8rem;
+		font-weight: 500;
+		letter-spacing: 0.04em;
 		color: var(--ink-muted);
 	}
 	.ks-trust li {
@@ -382,11 +389,11 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-stage-frame {
 		position: relative;
 		overflow: hidden;
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-lg);
 		background: var(--surface);
 		padding: 1.8rem;
-		box-shadow: var(--shadow-soft);
+		box-shadow: var(--ks-shadow-float);
 	}
 	.ks-stage-grid {
 		position: relative;
@@ -398,7 +405,7 @@ model = <span class="s">"claude-opus-4"</span>
 		position: relative;
 		z-index: 2;
 		background: var(--ks-surface-2);
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-md);
 		padding: 1rem 1rem 0.85rem;
 	}
@@ -406,7 +413,8 @@ model = <span class="s">"claude-opus-4"</span>
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		font-family: var(--ks-mono);
+		font-family: var(--font-display);
+		font-weight: 600;
 		font-size: 0.66rem;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
@@ -426,7 +434,7 @@ model = <span class="s">"claude-opus-4"</span>
 		font-family: var(--ks-mono);
 		font-size: 0.78rem;
 		padding: 0.45rem 0;
-		border-bottom: 1px dashed var(--line);
+		border-bottom: 1px dashed var(--ks-line);
 	}
 	.ks-kv:last-child { border-bottom: none; }
 	.ks-kv .k { color: var(--ink-muted); }
@@ -440,39 +448,28 @@ model = <span class="s">"claude-opus-4"</span>
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 0.55rem;
-		padding: 0 1rem;
+		gap: 0.6rem;
+		padding: 0 1.1rem;
 	}
 	.ks-hub-core {
-		width: 74px;
-		height: 74px;
+		width: 58px;
+		height: 58px;
 		border-radius: var(--radius-md);
 		display: grid;
 		place-items: center;
-		color: var(--surface);
-		background: var(--accent);
+		color: var(--accent);
+		background: rgba(137, 15, 188, 0.07);
+		border: 1px solid rgba(137, 15, 188, 0.16);
+		box-shadow: none;
 	}
-	.ks-hub-core svg { width: 34px; height: 34px; }
+	.ks-hub-core svg { width: 28px; height: 28px; }
 	.ks-hub-name {
-		font-family: var(--ks-mono);
+		font-family: var(--font-display);
 		font-size: 0.72rem;
 		font-weight: 700;
-		letter-spacing: 0.04em;
+		letter-spacing: 0.02em;
 		color: var(--ink);
 	}
-	.ks-hub-backup {
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
-		font-family: var(--ks-mono);
-		font-size: 0.62rem;
-		color: var(--accent-dark);
-		border: 1px solid var(--accent-soft);
-		background: var(--accent-soft);
-		padding: 0.25rem 0.6rem;
-		border-radius: 999px;
-	}
-	.ks-hub-backup svg { width: 11px; height: 11px; }
 
 	/* tool cards */
 	.ks-tools {
@@ -487,7 +484,7 @@ model = <span class="s">"claude-opus-4"</span>
 		align-items: center;
 		gap: 0.7rem;
 		background: var(--ks-surface-2);
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-md);
 		padding: 0.7rem 0.8rem;
 	}
@@ -499,7 +496,7 @@ model = <span class="s">"claude-opus-4"</span>
 		display: grid;
 		place-items: center;
 		background: var(--surface);
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		font-family: var(--ks-mono);
 		font-weight: 700;
 		font-size: 0.78rem;
@@ -520,8 +517,9 @@ model = <span class="s">"claude-opus-4"</span>
 		display: flex;
 		align-items: center;
 		gap: 0.3rem;
-		font-family: var(--ks-mono);
-		font-size: 0.66rem;
+		font-family: var(--font-display);
+		font-size: 0.68rem;
+		font-weight: 600;
 		color: var(--accent);
 	}
 	.ks-synced svg { width: 12px; height: 12px; }
@@ -536,7 +534,7 @@ model = <span class="s">"claude-opus-4"</span>
 		pointer-events: none;
 	}
 	.ks-flow line {
-		stroke: rgba(137, 15, 188, 0.45);
+		stroke: rgba(137, 15, 188, 0.3);
 		stroke-width: 1.4;
 		stroke-dasharray: 5 7;
 	}
@@ -551,19 +549,23 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-sec-eyebrow {
 		font-family: var(--font-display);
 		font-size: 0.72rem;
-		letter-spacing: 0.3em;
+		font-weight: 600;
+		letter-spacing: 0.18em;
 		text-transform: uppercase;
-		color: var(--accent);
+		color: var(--accent-dark);
 		margin-bottom: 0.8rem;
 	}
 	.ks-sec-title {
 		max-width: 18ch;
+		font-weight: 600;
 		line-height: 1.08;
+		letter-spacing: -0.018em;
 	}
 	.ks-sec-lead {
 		color: var(--ink-soft);
-		font-size: 1.1rem;
-		max-width: 54ch;
+		font-size: 1.05rem;
+		line-height: 1.6;
+		max-width: 50ch;
 		margin-top: 1rem;
 	}
 	.ks-sec-head { margin-bottom: 3rem; }
@@ -590,78 +592,22 @@ model = <span class="s">"claude-opus-4"</span>
 		gap: 0.8rem;
 		align-items: flex-start;
 		color: var(--ink-soft);
-		font-size: 1.02rem;
+		font-size: 1rem;
+		line-height: 1.58;
 	}
 	.ks-pain-list b { color: var(--ink); font-weight: 600; }
-	.ks-x {
-		flex-shrink: 0;
-		width: 22px;
-		height: 22px;
-		margin-top: 0.2rem;
-		border-radius: var(--radius-sm);
-		display: grid;
-		place-items: center;
-		background: var(--ks-danger-soft);
-		border: 1px solid rgba(192, 57, 43, 0.3);
-		color: var(--ks-danger);
-	}
-	.ks-x svg { width: 12px; height: 12px; }
-
-	.ks-codecard {
+	.ks-proofshot {
 		overflow: hidden;
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-md);
 		background: var(--surface);
-		box-shadow: 0 18px 40px rgba(21, 22, 26, 0.08);
+		box-shadow: var(--ks-shadow-card);
 	}
-	.ks-codebar {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 0.7rem 0.9rem;
-		border-bottom: 1px solid var(--line);
-		background: var(--ks-surface-2);
-	}
-	.ks-dots { display: flex; gap: 0.4rem; }
-	.ks-dots i {
-		width: 11px;
-		height: 11px;
-		border-radius: 50%;
-		background: var(--line);
+	.ks-proofshot-img {
 		display: block;
-	}
-	.ks-fname {
-		font-family: var(--ks-mono);
-		font-size: 0.72rem;
-		color: var(--ink-muted);
-		margin-left: 0.5rem;
-	}
-	.ks-codebody {
-		margin: 0;
-		padding: 1.1rem 1.2rem;
-		background: var(--surface);
-		font-family: var(--ks-mono);
-		font-size: 0.78rem;
-		line-height: 1.85;
-		color: var(--ink-soft);
-		overflow-x: auto;
-	}
-	.ks-codebody .c { color: var(--ink-muted); }
-	.ks-codebody .k { color: var(--accent-dark); }
-	.ks-codebody .s { color: var(--accent); }
-	.ks-codebody .old {
-		display: block;
-		border-radius: var(--radius-sm);
-		padding: 0 5px;
-		color: var(--ks-danger);
-		background: var(--ks-danger-soft);
-	}
-	.ks-codebody .new {
-		display: block;
-		border-radius: var(--radius-sm);
-		padding: 0 5px;
-		color: var(--accent-dark);
-		background: var(--accent-soft);
+		width: 100%;
+		height: auto;
+		border-radius: var(--radius-md);
 	}
 
 	/* ---------- HOW IT WORKS ---------- */
@@ -671,16 +617,17 @@ model = <span class="s">"claude-opus-4"</span>
 		gap: 1.4rem;
 	}
 	.ks-step {
-		background: var(--surface);
-		border: 1px solid var(--line);
+		background: rgba(255, 255, 255, 0.72);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-lg);
 		padding: 1.7rem 1.5rem;
-		box-shadow: 0 18px 40px rgba(21, 22, 26, 0.06);
-		transition: transform 0.25s ease, border-color 0.25s ease;
+		box-shadow: none;
+		transition: transform 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 	}
 	.ks-step:hover {
 		transform: translateY(-3px);
 		border-color: rgba(137, 15, 188, 0.35);
+		background: var(--surface);
 	}
 	.ks-step-n {
 		display: grid;
@@ -689,7 +636,8 @@ model = <span class="s">"claude-opus-4"</span>
 		height: 34px;
 		margin-bottom: 1.1rem;
 		border-radius: var(--radius-sm);
-		border: 1px solid rgba(137, 15, 188, 0.3);
+		border: 1px solid rgba(137, 15, 188, 0.18);
+		background: var(--surface);
 		font-family: var(--ks-mono);
 		font-weight: 700;
 		font-size: 0.85rem;
@@ -706,40 +654,56 @@ model = <span class="s">"claude-opus-4"</span>
 		border-radius: 6px;
 	}
 
-	/* ---------- FEATURES ---------- */
-	.ks-feat-grid {
+	.ks-guarantees {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 1.3rem;
+		grid-template-columns: minmax(14rem, 0.68fr) minmax(0, 1.32fr);
+		gap: 2rem;
+		margin-top: 2.4rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--ks-line);
 	}
-	.ks-feat {
-		position: relative;
-		overflow: hidden;
-		background: var(--surface);
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		padding: 1.9rem 1.8rem;
-		box-shadow: 0 18px 40px rgba(21, 22, 26, 0.06);
-		transition: transform 0.25s ease, border-color 0.25s ease;
+	.ks-guarantees-head p {
+		max-width: 28ch;
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: 0.98rem;
 	}
-	.ks-feat:hover {
-		transform: translateY(-3px);
-		border-color: rgba(137, 15, 188, 0.35);
+	.ks-sub-eyebrow {
+		font-family: var(--font-display);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--accent-dark);
+		margin-bottom: 0.75rem;
 	}
-	.ks-feat-ico {
+	.ks-guarantee-list {
+		list-style: none;
 		display: grid;
-		place-items: center;
-		width: 46px;
-		height: 46px;
-		margin-bottom: 1.2rem;
-		border-radius: var(--radius-md);
-		background: var(--accent-soft);
-		border: 1px solid rgba(137, 15, 188, 0.2);
-		color: var(--accent);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.2rem 1.6rem;
+		margin: 0;
+		padding: 0;
 	}
-	.ks-feat-ico svg { width: 23px; height: 23px; }
-	.ks-feat h3 { font-size: 1.25rem; margin-bottom: 0.6rem; }
-	.ks-feat p { color: var(--ink-soft); font-size: 0.98rem; margin: 0; }
+	.ks-guarantee-list li {
+		padding-top: 0.9rem;
+		border-top: 1px solid var(--ks-line);
+	}
+	.ks-guarantee-list li:nth-child(1),
+	.ks-guarantee-list li:nth-child(2) {
+		padding-top: 0;
+		border-top: none;
+	}
+	.ks-guarantee-list h3 {
+		margin-bottom: 0.35rem;
+		font-size: 1.05rem;
+	}
+	.ks-guarantee-list p {
+		margin: 0;
+		color: var(--ink-soft);
+		font-size: 0.94rem;
+		line-height: 1.55;
+	}
 
 	/* ---------- SECURITY ---------- */
 	.ks-sec-split {
@@ -768,8 +732,8 @@ model = <span class="s">"claude-opus-4"</span>
 		border-radius: var(--radius-sm);
 		display: grid;
 		place-items: center;
-		background: var(--accent-soft);
-		border: 1px solid rgba(137, 15, 188, 0.3);
+		background: var(--ks-accent-soft);
+		border: 1px solid rgba(137, 15, 188, 0.16);
 		color: var(--accent);
 	}
 	.ks-ck svg { width: 14px; height: 14px; }
@@ -777,30 +741,18 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-check-list .d { color: var(--ink-soft); font-size: 0.94rem; }
 
 	.ks-imgslot {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.7rem;
-		min-height: 300px;
-		padding: 2rem;
-		text-align: center;
-		color: var(--ink-muted);
-		border: 1.5px dashed var(--line);
-		border-radius: var(--radius-lg);
+		overflow: hidden;
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-md);
 		background: var(--surface);
+		box-shadow: var(--ks-shadow-card);
 	}
-	.ks-imgslot .ks-badge {
-		font-family: var(--ks-mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--accent);
-		border: 1px solid rgba(137, 15, 188, 0.3);
-		padding: 0.3rem 0.7rem;
-		border-radius: 999px;
+	.ks-shot {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: var(--radius-md);
 	}
-	.ks-imgslot p { font-size: 0.9rem; max-width: 34ch; margin: 0; }
 
 	/* ---------- FAQ ---------- */
 	.ks-faq {
@@ -808,7 +760,7 @@ model = <span class="s">"claude-opus-4"</span>
 		margin: 0 auto;
 	}
 	.ks-faq details {
-		border-bottom: 1px solid var(--line);
+		border-bottom: 1px solid var(--ks-line);
 		padding: 0.4rem 0;
 	}
 	.ks-faq summary {
@@ -831,7 +783,7 @@ model = <span class="s">"claude-opus-4"</span>
 		height: 24px;
 		display: grid;
 		place-items: center;
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-sm);
 		color: var(--accent);
 	}
@@ -853,16 +805,18 @@ model = <span class="s">"claude-opus-4"</span>
 	.ks-final-card {
 		position: relative;
 		overflow: hidden;
-		border: 1px solid var(--line);
+		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-lg);
 		background: var(--surface);
 		padding: 4rem 2.5rem;
-		box-shadow: var(--shadow-soft);
+		box-shadow: var(--ks-shadow-float);
 	}
 	.ks-final-card h2 {
 		max-width: 16ch;
 		margin: 0 auto 1.1rem;
 		font-size: clamp(2rem, 4.4vw, 3.1rem);
+		font-weight: 600;
+		letter-spacing: -0.018em;
 	}
 	.ks-final-card p {
 		max-width: 50ch;
@@ -886,12 +840,22 @@ model = <span class="s">"claude-opus-4"</span>
 		.ks-problem-grid,
 		.ks-sec-split { grid-template-columns: 1fr; gap: 2.4rem; }
 		.ks-steps { grid-template-columns: 1fr; }
-		.ks-feat-grid { grid-template-columns: 1fr; }
+		.ks-guarantees { grid-template-columns: 1fr; gap: 1.4rem; }
+		.ks-guarantees-head p { max-width: 42ch; }
 	}
 	@media (max-width: 720px) {
 		.ks-wrap { padding: 0 1.2rem; }
 		.ks-cta-row { flex-direction: column; align-items: stretch; }
 		.ks-trust { gap: 0.8rem 1.2rem; }
+		.ks-guarantee-list { grid-template-columns: 1fr; }
+		.ks-guarantee-list li:nth-child(2) {
+			padding-top: 0.9rem;
+			border-top: 1px solid var(--ks-line);
+		}
+		.ks-guarantee-list li:first-child {
+			padding-top: 0;
+			border-top: none;
+		}
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.ks-dot { animation: none; }

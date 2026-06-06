@@ -56,9 +56,9 @@ const consentKeyLiteral = JSON.stringify(consentKey);
 	}
 	.consent-card {
 		width: min(520px, calc(100vw - 2.5rem));
-		display: flex;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: center;
-		justify-content: space-between;
 		gap: 0.85rem;
 		padding: 1rem 1.4rem;
 		border-radius: var(--radius-md);
@@ -77,10 +77,12 @@ const consentKeyLiteral = JSON.stringify(consentKey);
 		display: flex;
 		align-items: center;
 		gap: 0.55rem;
-		flex-wrap: wrap;
+		flex-wrap: nowrap;
+		flex-shrink: 0;
 	}
 	.consent-actions .button {
-		padding: 0.55rem 1.05rem;
+		min-width: 6rem;
+		padding: 0.55rem 0.9rem;
 		font-size: 0.8rem;
 		letter-spacing: 0.12em;
 	}
@@ -95,8 +97,17 @@ const consentKeyLiteral = JSON.stringify(consentKey);
 		}
 		.consent-card {
 			width: 100%;
-			flex-direction: column;
+			grid-template-columns: 1fr;
 			align-items: flex-start;
+		}
+		.consent-actions {
+			width: 100%;
+			flex-direction: column;
+			align-items: stretch;
+		}
+		.consent-actions .button {
+			width: 100%;
+			min-width: 0;
 		}
 	}
 </style>

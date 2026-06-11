@@ -274,31 +274,31 @@ const linuxCliDownloads = [...findDownloadCards('Linux CLI', 'tar.gz')].sort((a,
 const windowsPortable = findDownloadCard('Windows', 'portable', 'x64');
 const linuxSecondaryActions = [
 	linuxAppImageArm?.url !== linuxAppImage?.url
-		? downloadAction(linuxAppImageArm, 'AppImage arm64')
+		? downloadAction(linuxAppImageArm, 'AppImage (arm64)')
 		: undefined,
-	...linuxCliDownloads.map((artifact) => downloadAction(artifact, `CLI ${artifact.arch ?? 'Universal'}`)),
+	...linuxCliDownloads.map((artifact) => downloadAction(artifact, `CLI (${artifact.arch ?? 'Universal'})`)),
 ].filter(Boolean) as FeaturedDownloadAction[];
 
 const featuredDownloadCards: FeaturedDownloadCard[] = [
 	{
 		platformKey: 'macOS',
 		title: 'macOS',
-		description: 'Desktop client for Mac. Use this on Apple silicon Macs.',
-		primary: downloadAction(macInstaller, 'Download for macOS'),
+		description: 'Apple Silicon native, desktop-ready.',
+		primary: downloadAction(macInstaller, 'macOS (Apple Silicon)'),
 		secondary: [],
 	},
 	{
 		platformKey: 'Windows',
 		title: 'Windows',
-		description: 'Standard desktop installer for Windows workstations.',
-		primary: downloadAction(windowsInstaller, 'Download for Windows'),
-		secondary: [downloadAction(windowsPortable, 'Portable zip')].filter(Boolean) as FeaturedDownloadAction[],
+		description: 'Installer or portable, x64 desktop.',
+		primary: downloadAction(windowsInstaller, 'Installer (x64)'),
+		secondary: [downloadAction(windowsPortable, 'Portable (x64)')].filter(Boolean) as FeaturedDownloadAction[],
 	},
 	{
 		platformKey: 'Linux',
 		title: 'Linux',
-		description: 'Use AppImage for desktop Linux, or CLI for server workflows.',
-		primary: downloadAction(linuxAppImage, 'Download AppImage x64'),
+		description: 'AppImage for desktop, CLI for server.',
+		primary: downloadAction(linuxAppImage, 'AppImage (x64)'),
 		secondary: linuxSecondaryActions,
 	},
 ];
@@ -337,31 +337,11 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 						(<b>API keys, endpoints, and models</b>) across laptops and servers.
 					</p>
 					<div class="ks-cta-row">
-						<a href="#download-files" class="button primary">
-							Choose your download
-							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+						<a href="/keysync/download/" class="button primary">
+							Download KeySync
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 						</a>
 						<a href="#how" class="button">See how it works</a>
-					</div>
-					<div class="ks-download-banner" role="status">
-						<div class="ks-download-banner-title">Current release: {version}</div>
-						{releaseDate ? <p class="ks-download-banner-meta">Published on {releaseDate}</p> : null}
-						{manifestError ? <p class="ks-download-banner-error">Current release metadata is unavailable, but you can still download from the backup URL.</p> : null}
-						<div class="ks-download-grid" id="hero-download-grid">
-							{manifestError || downloadRows.length === 0 ? (
-								<a href={KEYSYNC_DOWNLOAD_URL} class="button">Open download hub</a>
-							) : (
-								downloadRows.map((download) => (
-									<a
-										href={download.url}
-										class={downloadRows[0]?.url === download.url ? 'button primary' : 'button'}
-									>
-										{download.label}
-										<span class="ks-download-meta">({formatBytes(download.size)})</span>
-									</a>
-								))
-							)}
-						</div>
 					</div>
 					<ul class="ks-trust">
 						<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Backup before every write</li>
@@ -655,92 +635,14 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 						<h2>Set it once. <span class="ks-hl">Sync it everywhere.</span></h2>
 						<p>Download the desktop client, connect your first provider, and push your config to every AI agent in under a minute.</p>
 						<div class="ks-cta-row ks-center">
-							<a href="#download-files" class="button primary">
-								Choose your download
+							<a href="/keysync/download/" class="button primary">
+								Download KeySync
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 							</a>
 							<a href="#how" class="button">See how it works</a>
 						</div>
 						<div class="ks-run">$ ./keysync &nbsp;·&nbsp; requires Node.js 24+</div>
 					</div>
-				</div>
-			</section>
-
-			<!-- DOWNLOAD FILES -->
-			<section class="ks-band ks-download-files" id="download-files">
-				<div class="ks-wrap">
-					<div class="ks-sec-head ks-center">
-						<div class="ks-sec-eyebrow">Download</div>
-						<h2 class="ks-sec-title ks-mx-auto">Choose your KeySync client</h2>
-					</div>
-					<p class="ks-download-banner-meta">
-						{manifestError
-							? 'Manifest was not available in this build. If this persists, please use the public download hub.'
-							: `Current release: ${version}${releaseDate ? ` · Published on ${releaseDate}` : ''}`}
-					</p>
-					{featuredDownloadCards.length > 0 ? (
-						<>
-							<div class="ks-download-card-grid">
-								{featuredDownloadCards.map((card) => (
-									<article class="ks-download-choice">
-										<div class="ks-download-choice-top">
-											<div class="ks-os-icon" data-platform={card.platformKey} aria-hidden="true">
-												{card.platformKey === 'Windows' ? (
-													<svg viewBox="0 0 24 24" fill="none">
-														<path d="M3 4.4 10.6 3v8.1H3V4.4Zm9.1-1.6L21 1.2v9.9h-8.9V2.8ZM3 12.9h7.6V21L3 19.7v-6.8Zm9.1 0H21v9.9l-8.9-1.6v-8.3Z" fill="currentColor"></path>
-													</svg>
-												) : card.platformKey === 'Linux' ? (
-													<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-														<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z"></path>
-														<path d="m8 9 3 3-3 3"></path>
-														<path d="M13 15h3"></path>
-													</svg>
-												) : (
-													<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-														<path d="M8 4h8a3 3 0 0 1 3 3v7a6 6 0 0 1-6 6h-2a6 6 0 0 1-6-6V7a3 3 0 0 1 3-3Z"></path>
-														<path d="M9 8h6"></path>
-														<path d="M10 12h4"></path>
-													</svg>
-												)}
-											</div>
-											<div>
-												<h3>{card.title}</h3>
-												<p>{card.description}</p>
-											</div>
-										</div>
-										<div class="ks-download-choice-actions">
-											{card.primary ? (
-												<a href={card.primary.url} class="button primary">
-													{card.primary.label}
-												</a>
-											) : (
-												<a href={KEYSYNC_DOWNLOAD_URL} class="button primary">
-													Open download hub
-												</a>
-											)}
-											{card.primary ? <div class="ks-download-action-meta">{card.primary.meta}</div> : null}
-											{card.secondary.length > 0 ? (
-												<div class="ks-download-secondary" data-platform={card.platformKey}>
-													{card.secondary.map((action) => (
-														<a href={action.url}>
-															<span>{action.label}</span>
-															<small>{action.meta}</small>
-														</a>
-													))}
-												</div>
-											) : (
-												<div class="ks-download-secondary ks-download-secondary-placeholder" aria-hidden="true"></div>
-											)}
-										</div>
-									</article>
-								))}
-							</div>
-						</>
-					) : (
-						<p class="ks-download-banner-meta">
-							No downloadable files are available yet. Please use the backup download hub.
-						</p>
-					)}
 				</div>
 			</section>
 		</main>
@@ -1438,186 +1340,90 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 		max-width: 64ch;
 	}
 
-	.ks-download-banner {
-		margin: 0 auto;
-		max-width: 880px;
-		border: 1px solid var(--ks-line);
-		border-radius: var(--radius-md);
-		padding: 1rem 1.15rem;
-		background: rgba(137, 15, 188, 0.04);
-	}
-	.ks-download-banner-title {
-		font-family: var(--font-display);
-		font-size: 0.92rem;
-		font-weight: 600;
-		margin-bottom: 0.4rem;
-	}
-	.ks-download-banner-meta {
-		margin: 0.4rem 0;
-		color: var(--ink-soft);
-		font-size: 0.9rem;
-	}
-	.ks-download-banner-error {
-		margin: 0.4rem 0 0;
-		color: #a03b2d;
-		font-size: 0.9rem;
-		font-weight: 500;
-	}
-	.ks-download-grid {
-		margin: 0.9rem 0 0;
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.65rem;
-	}
-	.ks-download-grid .button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.52rem;
-		font-size: 0.89rem;
-		text-align: center;
-	}
-	.ks-download-meta {
-		color: var(--ink-muted);
-		white-space: nowrap;
-		font-size: 0.72rem;
-		font-family: var(--ks-mono);
-	}
-
 	.ks-download-files {
 		border-top: none;
 	}
-	.ks-download-card-grid {
+	.ks-download-grid {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 1rem;
-		margin-top: 1.15rem;
+		margin-top: 1.5rem;
 	}
 	.ks-download-choice {
 		display: flex;
 		flex-direction: column;
-		justify-content: flex-start;
-		min-height: 21rem;
 		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-md);
 		background: var(--surface);
-		padding: 1.35rem;
+		padding: 1.4rem;
 		box-shadow: var(--ks-shadow-card);
 	}
-	.ks-download-choice-top {
-		display: flex;
-		align-items: flex-start;
-		gap: 0.95rem;
-		min-height: 6.4rem;
-	}
-	.ks-download-choice h3 {
-		margin: 0 0 0.35rem;
-		font-size: 1.2rem;
+	.ks-download-platform {
+		margin: 0 0 0.5rem;
+		font-size: 1.15rem;
 		font-weight: 600;
-	}
-	.ks-download-choice p {
-		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.93rem;
-		line-height: 1.5;
-	}
-	.ks-os-icon {
-		flex: 0 0 auto;
-		width: 44px;
-		height: 44px;
-		display: grid;
-		place-items: center;
-		border: 1px solid var(--ks-line);
-		border-radius: var(--radius-sm);
-		background: var(--ks-surface-2);
+		text-align: center;
 		color: var(--ink);
 	}
-	.ks-os-icon svg {
-		width: 24px;
-		height: 24px;
-	}
-	.ks-os-icon[data-platform='macOS'] {
-		color: #4d9de0;
-		background: rgba(77, 157, 224, 0.08);
-		border-color: rgba(77, 157, 224, 0.18);
-	}
-	.ks-os-icon[data-platform='Windows'] {
-		color: #3f82f5;
-		background: rgba(63, 130, 245, 0.08);
-		border-color: rgba(63, 130, 245, 0.18);
-	}
-	.ks-os-icon[data-platform='Linux'] {
-		color: #2d8d67;
-		background: rgba(45, 141, 103, 0.08);
-		border-color: rgba(45, 141, 103, 0.18);
-	}
-	.ks-download-choice-actions {
-		margin-top: 1.55rem;
-	}
-	.ks-download-choice-actions > .button {
-		width: 100%;
-		justify-content: center;
-	}
-	.ks-download-action-meta {
-		margin-top: 0.55rem;
-		color: var(--ink-muted);
-		font-family: var(--ks-mono);
-		font-size: 0.74rem;
+	.ks-download-desc {
+		margin: 0 0 1.25rem;
+		color: var(--ink-soft);
+		font-size: 0.9rem;
+		line-height: 1.5;
 		text-align: center;
 	}
-	.ks-download-secondary {
-		display: grid;
-		gap: 0.5rem;
-		margin-top: 0.9rem;
-		min-height: 2.75rem;
+	.ks-download-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		margin-top: 1rem;
 	}
-	.ks-download-secondary[data-platform='Linux'] {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 0.45rem;
-	}
-	.ks-download-secondary[data-platform='Linux'] a:first-child {
-		grid-column: 1 / -1;
-	}
-	.ks-download-secondary-placeholder {
-		pointer-events: none;
-		visibility: hidden;
-	}
-	.ks-download-secondary a {
+	.ks-download-entry {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 0.7rem;
+		gap: 0.75rem;
+		padding: 0.7rem 0.9rem;
 		border: 1px solid var(--ks-line);
 		border-radius: var(--radius-sm);
-		padding: 0.62rem 0.75rem;
+		background: #fffefb;
 		color: var(--ink);
 		text-decoration: none;
-		background: #fffefb;
-		transition: border-color 0.2s ease, background-color 0.2s ease;
+		font-size: 0.88rem;
+		font-weight: 500;
+		transition: border-color 0.15s ease, background-color 0.15s ease, outline 0.15s ease;
 	}
-	.ks-download-secondary[data-platform='Linux'] a {
+	.ks-download-entry:hover,
+	.ks-download-entry:focus-visible {
+		border-color: rgba(137, 15, 188, 0.3);
+		background: rgba(137, 15, 188, 0.03);
+	}
+	.ks-download-entry:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.ks-download-entry span {
+		flex: 1;
+	}
+	.ks-download-icon {
+		flex-shrink: 0;
+		color: var(--accent);
+		transition: color 0.15s ease;
+	}
+	.ks-download-entry:hover .ks-download-icon {
+		color: var(--accent-dark, var(--accent));
+	}
+	.ks-download-secondary {
+		display: flex;
 		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.15rem;
-		padding: 0.5rem 0.65rem;
-		min-width: 0;
+		gap: 0.5rem;
 	}
-	.ks-download-secondary a:hover {
-		border-color: rgba(137, 15, 188, 0.28);
-		background: rgba(137, 15, 188, 0.035);
-	}
-	.ks-download-secondary span {
-		font-size: 0.86rem;
-		font-weight: 600;
-	}
-	.ks-download-secondary small {
+	.ks-download-footer {
+		margin: 1.5rem 0 0;
+		text-align: center;
 		color: var(--ink-muted);
 		font-family: var(--ks-mono);
-		font-size: 0.7rem;
-		white-space: nowrap;
-	}
-	.ks-download-secondary[data-platform='Linux'] small {
-		font-size: 0.66rem;
+		font-size: 0.82rem;
 	}
 
 	/* ---------- FINAL CTA ---------- */

@@ -4,6 +4,11 @@
 export const messages = {
 	nav: {
 		home: 'Home',
+		product: 'Product',
+		productLabel: 'KeySync',
+		productMenuItems: [
+			{ label: 'KeySync', href: '/keysync/' },
+		],
 		engineering: 'Engineering',
 		languageLabel: 'Language',
 		unavailableTitle: 'Not available in this language',
@@ -30,6 +35,15 @@ export const messages = {
 			{
 				label: 'Data ownership',
 				body: 'Returning data control to users and enabling no-silo access for agents.',
+			},
+		],
+		productsTitle: 'Our Products',
+		products: [
+			{
+				name: 'KeySync',
+				description: 'One config for every AI agent. Keep providers, keys, and models in sync across machines.',
+				learnMoreHref: '/keysync/',
+				downloadHref: '/keysync/download/',
 			},
 		],
 	},

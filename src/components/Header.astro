@@ -34,6 +34,7 @@ const navItems: NavItem[] = [
 	{ path: '/', label: t.home },
 	{ path: '/engineering/', label: t.engineering },
 ];
+const productMenuItems = t.productMenuItems;
 // The logo is a brand anchor that should always lead somewhere usable; if the
 // active locale has no home, fall back to the default-locale root rather than
 // linking to a page that does not exist. Text "Home" nav still follows the
@@ -65,6 +66,26 @@ const homeHref = isRouteAvailable('/', activeLocale)
 					</span>
 				),
 			)}
+			<div class="nav-dropdown" aria-label="Product menu">
+				<button
+					type="button"
+					class="nav-dropdown-trigger"
+					aria-haspopup="true"
+					aria-expanded="false"
+				>
+					{t.product}
+					<svg class="nav-dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+						<polyline points="6 9 12 15 18 9"></polyline>
+					</svg>
+				</button>
+				<ul class="nav-dropdown-menu" role="menu">
+					{productMenuItems.map((item) => (
+						<li role="none">
+							<a href={item.href} role="menuitem">{item.label}</a>
+						</li>
+					))}
+				</ul>
+			</div>
 		</div>
 		<div class="utility-links">
 			<div class="lang-switcher" aria-label={t.languageLabel}>
@@ -181,6 +202,84 @@ const homeHref = isRouteAvailable('/', activeLocale)
 		opacity: 0.4;
 		cursor: not-allowed;
 	}
+	/* Product dropdown menu */
+	.nav-dropdown {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+	}
+	.nav-dropdown-trigger {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0;
+		border: none;
+		background: transparent;
+		color: var(--ink-muted);
+		font-family: var(--font-display);
+		font-size: 0.85rem;
+		letter-spacing: 0.2em;
+		text-transform: uppercase;
+		cursor: pointer;
+		transition: color 0.2s ease;
+	}
+	.nav-dropdown-trigger:hover {
+		color: var(--ink);
+	}
+	.nav-dropdown-arrow {
+		transition: transform 0.2s ease;
+	}
+	.nav-dropdown:hover .nav-dropdown-arrow,
+	.nav-dropdown[data-open="true"] .nav-dropdown-arrow {
+		transform: rotate(180deg);
+	}
+	.nav-dropdown-menu {
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-top: 0.5rem;
+		min-width: 140px;
+		padding: 0.5rem 0;
+		list-style: none;
+		background: rgba(247, 244, 239, 0.96);
+		backdrop-filter: blur(18px);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-sm);
+		box-shadow: 0 8px 24px rgba(21, 22, 26, 0.08);
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity 0.2s ease, visibility 0.2s ease;
+		z-index: 20;
+	}
+	.nav-dropdown:hover .nav-dropdown-menu,
+	.nav-dropdown[data-open="true"] .nav-dropdown-menu {
+		opacity: 1;
+		visibility: visible;
+	}
+	.nav-dropdown-menu li {
+		margin: 0;
+	}
+	.nav-dropdown-menu a {
+		display: block;
+		padding: 0.5rem 1rem;
+		border-bottom: none;
+		color: var(--ink-muted);
+		font-family: var(--font-display);
+		font-size: 0.8rem;
+		letter-spacing: 0.15em;
+		text-transform: uppercase;
+		transition: color 0.15s ease, background-color 0.15s ease;
+	}
+	.nav-dropdown-menu a:hover,
+	.nav-dropdown-menu a:focus-visible {
+		color: var(--ink);
+		background: rgba(21, 22, 26, 0.03);
+	}
+	.nav-dropdown-menu a:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: -2px;
+	}
 	.utility-links {
 		display: flex;
 		align-items: center;
@@ -256,5 +355,63 @@ const homeHref = isRouteAvailable('/', activeLocale)
 			letter-spacing: 0.14em;
 			gap: 0.4rem;
 		}
+		.nav-dropdown-menu {
+			left: 0;
+			transform: none;
+		}
 	}
 </style>
+<script>
+	// Keyboard navigation for product dropdown
+	document.addEventListener('DOMContentLoaded', () => {
+		const dropdowns = document.querySelectorAll('.nav-dropdown');
+		dropdowns.forEach((dropdown) => {
+			const trigger = dropdown.querySelector('.nav-dropdown-trigger');
+			const menu = dropdown.querySelector('.nav-dropdown-menu');
+			const items = menu?.querySelectorAll('a');
+
+			trigger?.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault();
+					const isOpen = dropdown.getAttribute('data-open') === 'true';
+					dropdown.setAttribute('data-open', isOpen ? 'false' : 'true');
+					trigger.setAttribute('aria-expanded', !isOpen);
+					if (!isOpen && items && items.length > 0) {
+						items[0].focus();
+					}
+				} else if (e.key === 'ArrowDown' && items && items.length > 0) {
+					e.preventDefault();
+					items[0].focus();
+				}
+			});
+
+			items?.forEach((item, index) => {
+				item.addEventListener('keydown', (e) => {
+					if (e.key === 'Escape') {
+						dropdown.setAttribute('data-open', 'false');
+						trigger?.setAttribute('aria-expanded', 'false');
+						trigger?.focus();
+					} else if (e.key === 'ArrowDown' && index < items.length - 1) {
+						e.preventDefault();
+						items[index + 1].focus();
+					} else if (e.key === 'ArrowUp') {
+						e.preventDefault();
+						if (index > 0) {
+							items[index - 1].focus();
+						} else {
+							trigger?.focus();
+						}
+					}
+				});
+			});
+
+			// Close on click outside
+			document.addEventListener('click', (e) => {
+				if (!dropdown.contains(e.target as Node)) {
+					dropdown.setAttribute('data-open', 'false');
+					trigger?.setAttribute('aria-expanded', 'false');
+				}
+			});
+		});
+	});
+</script>

@@ -6,6 +6,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
 import { DEFAULT_LOCALE } from '../../i18n/config';
+import { GADS_CONVERSION_ID, SITE_GADS_ID } from '../../consts';
 import { ImageMetadata } from 'astro:assets';
 import appleLogo from '../../assets/apple.svg';
 import windowsLogo from '../../assets/windows.svg';
@@ -359,7 +360,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 								<p class="ks-download-desc">{card.description}</p>
 								<div class="ks-download-actions">
 									{card.primary ? (
-										<a href={card.primary.url} class="ks-download-entry">
+										<a href={card.primary.url} class="ks-download-entry" data-platform={card.platformKey}>
 											<span>{card.primary.label}</span>
 											<svg class="ks-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 												<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -380,7 +381,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 									{card.secondary.length > 0 ? (
 										<div class="ks-download-secondary">
 											{card.secondary.map((action) => (
-												<a href={action.url} class="ks-download-entry">
+												<a href={action.url} class="ks-download-entry" data-platform={card.platformKey}>
 													<span>{action.label}</span>
 													<svg class="ks-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 														<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -412,6 +413,35 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 			</section>
 		</main>
 		<Footer lang={DEFAULT_LOCALE} />
+
+		<!-- Download Tracking -->
+		<script is:inline define:vars={{ gadsId: SITE_GADS_ID, conversionId: GADS_CONVERSION_ID }}>
+			(function () {
+				function fireConversion(e) {
+					var link = e.currentTarget;
+					var platform = link.closest('[data-platform]')?.dataset.platform || 'unknown';
+					var label = link.querySelector('span')?.textContent || 'unknown';
+
+					if (typeof window.gtag === 'function') {
+						// GA4 event with custom parameters
+						window.gtag('event', 'download_keysync', {
+							platform: platform,
+							tool: 'KeySync',
+							download_label: label,
+						});
+						// Google Ads conversion
+						window.gtag('event', 'conversion', {
+							send_to: gadsId + '/' + conversionId,
+							value: 1.0,
+							currency: 'USD',
+						});
+					}
+				}
+				document.querySelectorAll('.ks-download-entry').forEach(function (link) {
+					link.addEventListener('click', fireConversion, { once: true });
+				});
+			})();
+		</script>
 	</body>
 
 	<style>

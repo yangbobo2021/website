@@ -6,7 +6,7 @@
 // all pages through the use of the <BaseHead /> component.
 import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
-import { SITE_DESCRIPTION, SITE_GA_CONSENT_KEY, SITE_GA_ID, SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_GA_CONSENT_KEY, SITE_GA_ID, SITE_GADS_ID, SITE_TITLE } from '../consts';
 import { DEFAULT_LOCALE, HTML_LANG, type Locale, OG_LOCALE } from '../i18n/config';
 
 interface Props {
@@ -89,7 +89,11 @@ const structuredData = {
 		<script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
 		<script
 			is:inline
-			set:html={`(function(){var gaId=${gaIdLiteral};if(!gaId){return;}window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments);}window.gtag=window.gtag||gtag;var consent='denied';try{var stored=localStorage.getItem(${consentKeyLiteral});if(stored==='granted'){consent='granted';}}catch(err){}gtag('consent','default',{ad_storage:consent,analytics_storage:consent,ad_user_data:consent,ad_personalization:consent});gtag('js',new Date());gtag('config',gaId);})();`}
+			set:html={`(function(){var gaId=${gaIdLiteral};if(!gaId){return;}window.dataLayer=window.dataLayer||[];function gtag(){window.dataLayer.push(arguments);}window.gtag=window.gtag||gtag;var consent='denied';try{var stored=localStorage.getItem(${consentKeyLiteral});if(stored==='granted'){consent='granted';}}catch(err){}gtag('consent','default',{ad_storage:consent,analytics_storage:consent,ad_user_data:consent,ad_personalization:consent});gtag('js',new Date());gtag('config',gaId);
+
+		/* Google Ads */
+		var gadsId=${JSON.stringify(SITE_GADS_ID)};if(gadsId){gtag('config',gadsId);}
+		})();`}
 		/>
 	</>
 )}

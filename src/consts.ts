@@ -6,8 +6,10 @@
 
 export const SITE_TITLE = 'SubLang';
 export const SITE_DESCRIPTION = 'SubLang - Exploring the linguistic foundation for agentic AI';
-export const SITE_GA_ID = 'G-WTFHSG322N';
+export const SITE_GA_ID = 'G-LQ1W9RB2FW';
 export const SITE_GA_CONSENT_KEY = 'sublang-ga-consent';
+export const SITE_GADS_ID = 'AW-18005500162';
+export const GADS_CONVERSION_ID = 'DsXKCOOz7rscEILC2IlD';
 
 export const SITE_AUTHOR = {
 	name: 'Alphabet',

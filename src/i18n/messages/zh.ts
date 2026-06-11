@@ -6,6 +6,11 @@ import type { Messages } from './en';
 export const messages: Messages = {
 	nav: {
 		home: '首页',
+		product: '产品',
+		productLabel: 'KeySync',
+		productMenuItems: [
+			{ label: 'KeySync', href: '/keysync/' },
+		],
 		engineering: '工程笔记',
 		languageLabel: '语言',
 		unavailableTitle: '当前页面暂无该语言版本',

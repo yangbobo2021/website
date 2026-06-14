@@ -14,6 +14,7 @@ export const messages: Messages = {
 		engineering: '工程笔记',
 		languageLabel: '语言',
 		unavailableTitle: '当前页面暂无该语言版本',
+		menuOpen: '打开菜单',
 	},
 	home: {
 		tag: '开源语言实验室',

@@ -12,6 +12,7 @@ export const messages = {
 		engineering: 'Engineering',
 		languageLabel: 'Language',
 		unavailableTitle: 'Not available in this language',
+		menuOpen: 'Open menu',
 	},
 	home: {
 		tag: 'Open Language Lab',

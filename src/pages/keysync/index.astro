@@ -8,6 +8,16 @@ import Header from '../../components/Header.astro';
 import { Image } from 'astro:assets';
 import keysyncScreenshot from '../../assets/keysync-screenshot.png';
 import { DEFAULT_LOCALE } from '../../i18n/config';
+import { ImageMetadata } from 'astro:assets';
+import appleLogo from '../../assets/apple.svg';
+import windowsLogo from '../../assets/windows.svg';
+import linuxLogo from '../../assets/linux.svg';
+
+const platformLogos: Record<string, { src: ImageMetadata; alt: string }> = {
+	macOS: { src: appleLogo, alt: 'macOS' },
+	Windows: { src: windowsLogo, alt: 'Windows' },
+	Linux: { src: linuxLogo, alt: 'Linux' },
+};
 
 const PAGE_TITLE = 'KeySync — One config for every AI agent';
 const PAGE_DESCRIPTION =
@@ -325,7 +335,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 		/>
 	</head>
 	<body>
-		<Header lang={DEFAULT_LOCALE} translations={translations} />
+		<Header lang={DEFAULT_LOCALE} translations={translations} hasKeysync />
 		<main class="ks-main">
 			<!-- HERO -->
 			<header class="ks-band ks-hero-band">
@@ -336,13 +346,39 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 						Keep Claude Code, Codex, OpenClaw, and Hermes on the same provider
 						(<b>API keys, endpoints, and models</b>) across laptops and servers.
 					</p>
-					<div class="ks-cta-row">
+				<!-- Desktop CTA (hidden on mobile/tablet < 1024px) -->
+					<div class="ks-cta-row ks-desktop-cta">
 						<a href="/keysync/download/" class="button primary">
 							Download KeySync
 							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 						</a>
 						<a href="#how" class="button">See how it works</a>
 					</div>
+
+					<!-- Mobile CTA (hidden on desktop >= 1024px) -->
+					<div class="ks-mobile-cta" id="mobile-cta">
+						<div class="ks-mobile-cta-head">
+							<svg class="ks-mobile-cta-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+								<line x1="8" y1="21" x2="16" y2="21"></line>
+								<line x1="12" y1="17" x2="12" y2="21"></line>
+							</svg>
+							<h3>Get KeySync on your computer</h3>
+						</div>
+						<p class="ks-mobile-cta-desc">KeySync runs on your desktop. Copy this link and open it on your computer.</p>
+
+						<div class="ks-mobile-url-display">
+							<span class="ks-mobile-url">sublang.ai/keysync/download/</span>
+							<button class="ks-mobile-copy-btn-primary" id="mobile-cta-copy" type="button">
+								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+									<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+								</svg>
+								<span class="ks-mobile-cta-copy-text">Copy</span>
+							</button>
+						</div>
+					</div>
+
 					<ul class="ks-trust">
 						<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Backup before every write</li>
 						<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>End-to-end encrypted</li>
@@ -519,6 +555,36 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 				</div>
 			</section>
 
+			<!-- MOBILE: 3-step overview -->
+			<section class="ks-band ks-mobile-steps ks-mobile-only" aria-labelledby="ks-mobile-steps-title">
+				<div class="ks-wrap">
+					<h2 class="ks-mobile-steps-title" id="ks-mobile-steps-title">How to get started</h2>
+					<ol class="ks-mobile-steps-list">
+						<li class="ks-mobile-step">
+							<span class="ks-mobile-step-num">1</span>
+							<div class="ks-mobile-step-content">
+								<span class="ks-mobile-step-label">Download KeySync</span>
+								<span class="ks-mobile-step-desc">Get the installer for macOS, Windows, or Linux</span>
+							</div>
+						</li>
+						<li class="ks-mobile-step">
+							<span class="ks-mobile-step-num">2</span>
+							<div class="ks-mobile-step-content">
+								<span class="ks-mobile-step-label">Install and connect</span>
+								<span class="ks-mobile-step-desc">KeySync auto-detects your existing tools and settings</span>
+							</div>
+						</li>
+						<li class="ks-mobile-step">
+							<span class="ks-mobile-step-num">3</span>
+							<div class="ks-mobile-step-content">
+								<span class="ks-mobile-step-label">Manage from any browser</span>
+								<span class="ks-mobile-step-desc">Update keys, models, and endpoints — all synced</span>
+							</div>
+						</li>
+					</ol>
+				</div>
+			</section>
+
 			<!-- HOW IT WORKS -->
 			<section class="ks-band" id="how">
 				<div class="ks-wrap">
@@ -634,19 +700,124 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 					<div class="ks-final-card">
 						<h2>Set it once. <span class="ks-hl">Sync it everywhere.</span></h2>
 						<p>Download the desktop client, connect your first provider, and push your config to every AI agent in under a minute.</p>
-						<div class="ks-cta-row ks-center">
+						<!-- Desktop CTA -->
+						<div class="ks-cta-row ks-center ks-desktop-cta">
 							<a href="/keysync/download/" class="button primary">
 								Download KeySync
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 							</a>
 							<a href="#how" class="button">See how it works</a>
 						</div>
+
+						<!-- Mobile CTA -->
+						<div class="ks-final-mobile-cta" id="final-mobile-cta">
+							<button class="ks-final-copy-btn" id="final-mobile-cta-copy" type="button">
+								<svg class="ks-final-copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+									<polyline points="7 10 12 15 17 10"></polyline>
+									<line x1="12" y1="15" x2="12" y2="3"></line>
+								</svg>
+								<span class="ks-final-copy-text">Get download link</span>
+							</button>
+						</div>
+
 						<div class="ks-run">$ ./keysync &nbsp;·&nbsp; requires Node.js 24+</div>
 					</div>
 				</div>
 			</section>
 		</main>
 		<Footer lang={DEFAULT_LOCALE} />
+
+		<!-- Mobile CTA Functionality -->
+		<script is:inline>
+			(function () {
+				var INSTALL_URL = 'https://sublang.ai/keysync/download/';
+				var TOAST_DURATION = 2000;
+
+				function copyToClipboard(text, button) {
+					if (navigator.clipboard && navigator.clipboard.writeText) {
+						navigator.clipboard.writeText(text).then(function () {
+							showButtonSuccess(button);
+						}).catch(function () {
+							fallbackCopy(text, button);
+						});
+					} else {
+						fallbackCopy(text, button);
+					}
+				}
+
+				function fallbackCopy(text, button) {
+					var textarea = document.createElement('textarea');
+					textarea.value = text;
+					textarea.style.position = 'fixed';
+					textarea.style.opacity = '0';
+					document.body.appendChild(textarea);
+					textarea.select();
+					try {
+						document.execCommand('copy');
+						showButtonSuccess(button);
+					} catch (err) {
+						showButtonError(button);
+					}
+					document.body.removeChild(textarea);
+				}
+
+				function showButtonSuccess(button) {
+					var textEl = button.querySelector('.ks-final-copy-text') || button.querySelector('.ks-mobile-cta-copy-text');
+					if (textEl) {
+						textEl.textContent = 'Copied!';
+					}
+					button.classList.add('ks-copy-success');
+					// Swap icon to checkmark
+					var svgEl = button.querySelector('svg');
+					if (svgEl) {
+						svgEl.innerHTML = '<path d="M20 6 9 17l-5-5"></path>';
+					}
+				}
+
+				function showButtonError(button) {
+					var textEl = button.querySelector('.ks-final-copy-text');
+					var originalText = textEl?.textContent || '';
+					if (textEl) {
+						textEl.textContent = 'Failed';
+					}
+					setTimeout(function () {
+						if (textEl) textEl.textContent = originalText;
+					}, TOAST_DURATION);
+				}
+
+				// Copy URL button
+				var copyBtn = document.getElementById('mobile-cta-copy');
+				if (copyBtn) {
+					copyBtn.addEventListener('click', function (e) {
+						e.preventDefault();
+						copyToClipboard(INSTALL_URL, copyBtn);
+						if (typeof window.gtag === 'function') {
+							window.gtag('event', 'mobile_cta_copy_url', {
+								event_category: 'engagement',
+								event_label: 'keysync_mobile',
+							});
+						}
+					});
+				}
+
+				// Final CTA Copy Link button
+				var finalCopyBtn = document.getElementById('final-mobile-cta-copy');
+				if (finalCopyBtn) {
+					finalCopyBtn.addEventListener('click', function (e) {
+						e.preventDefault();
+						copyToClipboard(INSTALL_URL, finalCopyBtn);
+						finalCopyBtn.blur();
+						if (typeof window.gtag === 'function') {
+							window.gtag('event', 'final_cta_copy_url', {
+								event_category: 'engagement',
+								event_label: 'keysync_mobile_final',
+							});
+						}
+					});
+				}
+			})();
+		</script>
 	</body>
 
 	<style>
@@ -1459,7 +1630,219 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 		color: var(--ink-muted);
 	}
 
+	/* ---------- MOBILE CTA (< 1024px) ---------- */
+	.ks-mobile-cta {
+		display: none;
+		max-width: 440px;
+		margin: 0 auto 2rem;
+		padding: 1.4rem;
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-lg);
+		background: var(--surface);
+		box-shadow: 0 8px 32px rgba(21, 22, 26, 0.06);
+		text-align: left;
+	}
+	.ks-mobile-cta-head {
+		display: flex;
+		align-items: center;
+		gap: 0.7rem;
+		margin-bottom: 0.6rem;
+	}
+	.ks-mobile-cta-icon {
+		flex-shrink: 0;
+		color: var(--accent);
+	}
+	.ks-mobile-cta-head h3 {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0;
+		color: var(--ink);
+	}
+	.ks-mobile-cta-desc {
+		font-size: 0.88rem;
+		line-height: 1.55;
+		color: var(--ink-soft);
+		margin: 0 0 1.1rem;
+	}
+	.ks-mobile-url-display {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.4rem;
+		padding: 0.4rem;
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-md);
+		background: var(--ks-surface-2);
+	}
+	.ks-mobile-url {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		padding: 0.55rem 0.75rem;
+		font-family: var(--ks-mono);
+		font-size: 0.82rem;
+		color: var(--ink);
+		letter-spacing: -0.01em;
+		word-break: break-all;
+		overflow-wrap: anywhere;
+		min-width: 0;
+	}
+	.ks-mobile-copy-btn-primary {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		padding: 0.55rem 1.05rem;
+		border: none;
+		border-radius: var(--radius-sm);
+		background: var(--accent);
+		color: #fff;
+		font-family: var(--font-display);
+		font-size: 0.88rem;
+		font-weight: 600;
+		cursor: pointer;
+		white-space: nowrap;
+		transition: background-color 0.2s ease, transform 0.15s ease;
+	}
+	.ks-mobile-copy-btn-primary:hover {
+		background: var(--accent-dark);
+	}
+	.ks-mobile-copy-btn-primary:active {
+		transform: scale(0.97);
+	}
+	.ks-mobile-copy-btn-primary:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+	.ks-mobile-copy-btn-primary svg {
+		flex-shrink: 0;
+	}
+	.ks-mobile-copy-btn-primary.ks-copy-success {
+		background: #2d7d46;
+	}
+
+	/* ---------- MOBILE 3-STEP OVERVIEW ---------- */
+	.ks-mobile-steps {
+		display: none;
+		padding: 3rem 0;
+		background: var(--ks-surface-2);
+		border-top: 1px solid var(--ks-line);
+	}
+	.ks-mobile-steps-title {
+		font-size: 1.15rem;
+		font-weight: 600;
+		margin: 0 0 1.4rem;
+		color: var(--ink);
+		text-align: center;
+	}
+	.ks-mobile-steps-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.9rem;
+	}
+	.ks-mobile-step {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1rem;
+		background: var(--surface);
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-md);
+	}
+	.ks-mobile-step-num {
+		flex-shrink: 0;
+		width: 28px;
+		height: 28px;
+		display: grid;
+		place-items: center;
+		border-radius: var(--radius-sm);
+		background: rgba(137, 15, 188, 0.08);
+		border: 1px solid rgba(137, 15, 188, 0.15);
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		font-weight: 700;
+		color: var(--accent);
+	}
+	.ks-mobile-step-content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+	.ks-mobile-step-label {
+		font-weight: 600;
+		font-size: 0.95rem;
+		color: var(--ink);
+	}
+	.ks-mobile-step-desc {
+		font-size: 0.85rem;
+		color: var(--ink-soft);
+		line-height: 1.5;
+	}
+
+	/* ---------- FINAL MOBILE CTA ---------- */
+	.ks-final-mobile-cta {
+		display: none;
+		margin-top: 1.5rem;
+	}
+	.ks-final-copy-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		min-width: 180px;
+		padding: 0.75rem 1.25rem;
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		color: var(--ink);
+		font-family: var(--font-display);
+		font-size: 0.9rem;
+		font-weight: 600;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+		-webkit-user-select: none;
+		user-select: none;
+	}
+	.ks-final-copy-btn:hover {
+		border-color: rgba(137, 15, 188, 0.4);
+		box-shadow: 0 0 0 1px rgba(137, 15, 188, 0.15);
+	}
+	.ks-final-copy-btn:active {
+		transform: scale(0.97);
+		background: var(--ks-surface-2);
+	}
+	.ks-final-copy-btn:focus {
+		outline: none;
+	}
+	.ks-final-copy-btn.ks-copy-success {
+		border-color: #2d7d46;
+		background: rgba(45, 125, 70, 0.06);
+		color: #2d7d46;
+	}
+	.ks-final-copy-icon {
+		flex-shrink: 0;
+		color: var(--accent);
+	}
+	.ks-final-copy-btn.ks-copy-success .ks-final-copy-icon {
+		color: #2d7d46;
+	}
 	/* ---------- RESPONSIVE ---------- */
+	@media (max-width: 1023px) {
+		.ks-desktop-cta { display: none; }
+		.ks-mobile-cta { display: block; }
+		.ks-mobile-steps { display: block; }
+		.ks-final-mobile-cta { display: block; }
+		.ks-mobile-only { display: block; }
+		.ks-how { display: none; }
+		.ks-final { display: block; }
+		.ks-final-card { padding: 2.5rem 1.5rem; }
+		.ks-final-card h2 { font-size: 1.6rem; }
+		.ks-final-card p { font-size: 0.95rem; }
+	}
 	@media (max-width: 900px) {
 		.ks-band { padding: 4rem 0; }
 		.ks-wrap { padding: 0 1.5rem; }

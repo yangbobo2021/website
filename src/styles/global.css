@@ -121,6 +121,11 @@ h6 {
 h1 {
 	font-size: clamp(2.6rem, 5vw, 4.5rem);
 }
+/* Chinese-specific: looser letter-spacing and line-height for better readability */
+:lang(zh) h1 {
+	letter-spacing: 0.02em;
+	line-height: 1.4;
+}
 h2 {
 	font-size: clamp(1.9rem, 3.5vw, 3rem);
 }

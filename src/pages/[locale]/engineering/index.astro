@@ -4,20 +4,27 @@
 
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { DEFAULT_LOCALE, stripLocaleFromId } from '../../i18n/config';
-import { useTranslations } from '../../i18n/messages';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import Header from '../../../components/Header.astro';
+import { DEFAULT_LOCALE, HTML_LANG, NON_DEFAULT_LOCALES, stripLocaleFromId, type Locale } from '../../../i18n/config';
+import { useTranslations } from '../../../i18n/messages';
 
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((locale) => ({
+		params: { locale },
+	}));
+}
+
+const { locale } = Astro.params as { locale: Locale };
 const translations = { en: '/engineering/', zh: '/zh/engineering/' } as const;
-const t = useTranslations(DEFAULT_LOCALE).engineering;
+const t = useTranslations(locale).engineering;
 
 const posts = (await getCollection('ref'))
 	.map((post) => {
 		const parsed = stripLocaleFromId(post.id);
-		if (!parsed || parsed.locale !== DEFAULT_LOCALE) return null;
+		if (!parsed || parsed.locale !== locale) return null;
 		return { post, slug: parsed.slug };
 	})
 	.filter((value) => value !== null)
@@ -26,12 +33,12 @@ const posts = (await getCollection('ref'))
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={HTML_LANG[locale]}>
 	<head>
 		<BaseHead
 			title={t.pageTitle}
 			description={t.pageDescription}
-			lang={DEFAULT_LOCALE}
+			lang={locale}
 		/>
 		<style>
 			.page-intro {
@@ -95,7 +102,7 @@ const posts = (await getCollection('ref'))
 		</style>
 	</head>
 	<body>
-		<Header lang={DEFAULT_LOCALE} translations={translations} />
+		<Header lang={locale} translations={translations} />
 		<main>
 			<section class="page-intro">
 				<span class="eyebrow">{t.eyebrow}</span>
@@ -129,6 +136,6 @@ const posts = (await getCollection('ref'))
 				</ul>
 			</section>
 		</main>
-		<Footer lang={DEFAULT_LOCALE} />
+		<Footer lang={locale} />
 	</body>
 </html>

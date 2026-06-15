@@ -2,19 +2,26 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
 
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import Header from '../../components/Header.astro';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import Header from '../../../components/Header.astro';
 import { Image } from 'astro:assets';
-import keysyncScreenshot from '../../assets/keysync-screenshot.png';
-import { DEFAULT_LOCALE } from '../../i18n/config';
-import { useTranslations } from '../../i18n/messages';
+import keysyncScreenshot from '../../../assets/keysync-screenshot.png';
+import { HTML_LANG, NON_DEFAULT_LOCALES, type Locale } from '../../../i18n/config';
+import { useTranslations } from '../../../i18n/messages';
 import { ImageMetadata } from 'astro:assets';
-import appleLogo from '../../assets/apple.svg';
-import windowsLogo from '../../assets/windows.svg';
-import linuxLogo from '../../assets/linux.svg';
+import appleLogo from '../../../assets/apple.svg';
+import windowsLogo from '../../../assets/windows.svg';
+import linuxLogo from '../../../assets/linux.svg';
 
-const t = useTranslations(DEFAULT_LOCALE).keysync;
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((locale) => ({
+		params: { locale },
+	}));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const t = useTranslations(locale).keysync;
 
 const platformLogos: Record<string, { src: ImageMetadata; alt: string }> = {
 	macOS: { src: appleLogo, alt: 'macOS' },
@@ -42,7 +49,7 @@ const PLATFORM_ORDER = [
 
 const ARCH_PRIORITY = ['arm64', 'x64', 'x86_64', 'amd64'];
 const LINUX_DOWNLOAD_ARCH_ORDER = ['x64', 'x86_64', 'amd64', 'arm64'];
-const downloadT = useTranslations(DEFAULT_LOCALE).keysyncDownload;
+const downloadT = useTranslations(locale).keysyncDownload;
 const KIND_LABELS: Record<string, string> = {
 	dmg: downloadT.kindLabels.installer,
 	installer: downloadT.kindLabels.installer,
@@ -318,25 +325,25 @@ const featuredDownloadCards: FeaturedDownloadCard[] = [
 
 const translations = { en: '/keysync/', zh: '/zh/keysync/' } as const;
 const alternates = (Object.entries(translations) as Array<[keyof typeof translations, string]>).map(
-	([locale, path]) => ({
-		locale,
+	([loc, path]) => ({
+		locale: loc,
 		href: new URL(path, Astro.site).toString(),
 	}),
 );
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={HTML_LANG[locale]}>
 	<head>
 		<BaseHead
 			title={PAGE_TITLE}
 			description={PAGE_DESCRIPTION}
-			lang={DEFAULT_LOCALE}
+			lang={locale}
 			alternates={alternates}
 		/>
 	</head>
 	<body>
-		<Header lang={DEFAULT_LOCALE} translations={translations} hasKeysync />
+		<Header lang={locale} translations={translations} hasKeysync />
 		<main class="ks-main">
 			<!-- HERO -->
 			<header class="ks-band ks-hero-band">
@@ -724,7 +731,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 				</div>
 			</section>
 		</main>
-		<Footer lang={DEFAULT_LOCALE} />
+		<Footer lang={locale} />
 
 		<!-- Mobile CTA Functionality -->
 		<script is:inline>
@@ -871,22 +878,20 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 		50% { opacity: 0.35; }
 	}
 	.ks-hero h1 {
-		font-size: clamp(2.45rem, 5.5vw, 4.05rem);
+		font-size: clamp(1.9rem, 4.2vw, 3rem);
 		font-weight: 600;
 		line-height: 1.04;
 		letter-spacing: -0.025em;
 		max-width: 16ch;
 		margin: 1.4rem auto 1.3rem;
 	}
-	/* Chinese-specific adjustments: looser line-height, remove max-width constraint, prevent orphan punctuation */
+	/* Chinese-specific adjustments */
 	:lang(zh) .ks-hero h1 {
 		display: block;
 		width: 100%;
 		letter-spacing: 0.01em;
 		line-height: 1.35;
 		max-width: none;
-		overflow-wrap: break-word;
-		word-break: normal;
 	}
 	.ks-hl {
 		color: var(--accent);

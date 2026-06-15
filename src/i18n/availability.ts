@@ -13,9 +13,10 @@ import { DEFAULT_LOCALE, type Locale } from './config';
  * translation = appending the locale here AND authoring the page.
  */
 export const ROUTE_AVAILABILITY: Record<string, readonly Locale[]> = {
-	'/': ['en'],
-	'/engineering/': ['en'],
-	'/keysync/': ['en'],
+	'/': ['en', 'zh'],
+	'/engineering/': ['en', 'zh'],
+	'/keysync/': ['en', 'zh'],
+	'/keysync/download/': ['en', 'zh'],
 };
 
 export function isRouteAvailable(path: string, locale: Locale): boolean {

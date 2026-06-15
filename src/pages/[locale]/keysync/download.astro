@@ -2,18 +2,25 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
 
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import Header from '../../components/Header.astro';
-import { DEFAULT_LOCALE } from '../../i18n/config';
-import { useTranslations } from '../../i18n/messages';
-import { GADS_CONVERSION_ID, SITE_GADS_ID } from '../../consts';
+import BaseHead from '../../../components/BaseHead.astro';
+import Footer from '../../../components/Footer.astro';
+import Header from '../../../components/Header.astro';
+import { HTML_LANG, NON_DEFAULT_LOCALES, localeHref, type Locale } from '../../../i18n/config';
+import { useTranslations } from '../../../i18n/messages';
+import { GADS_CONVERSION_ID, SITE_GADS_ID } from '../../../consts';
 import { ImageMetadata } from 'astro:assets';
-import appleLogo from '../../assets/apple.svg';
-import windowsLogo from '../../assets/windows.svg';
-import linuxLogo from '../../assets/linux.svg';
+import appleLogo from '../../../assets/apple.svg';
+import windowsLogo from '../../../assets/windows.svg';
+import linuxLogo from '../../../assets/linux.svg';
 
-const t = useTranslations(DEFAULT_LOCALE).keysyncDownload;
+export function getStaticPaths() {
+	return NON_DEFAULT_LOCALES.map((locale) => ({
+		params: { locale },
+	}));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+const t = useTranslations(locale).keysyncDownload;
 
 const platformLogos: Record<string, { src: ImageMetadata; alt: string }> = {
 	macOS: { src: appleLogo, alt: 'macOS' },
@@ -316,29 +323,29 @@ const featuredDownloadCards: FeaturedDownloadCard[] = [
 
 const translations = { en: '/keysync/download/', zh: '/zh/keysync/download/' } as const;
 const alternates = (Object.entries(translations) as Array<[keyof typeof translations, string]>).map(
-	([locale, path]) => ({
-		locale,
+	([loc, path]) => ({
+		locale: loc,
 		href: new URL(path, Astro.site).toString(),
 	}),
 );
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={HTML_LANG[locale]}>
 	<head>
 		<BaseHead
 			title={PAGE_TITLE}
 			description={PAGE_DESCRIPTION}
-			lang={DEFAULT_LOCALE}
+			lang={locale}
 			alternates={alternates}
 		/>
 	</head>
 	<body>
-		<Header lang={DEFAULT_LOCALE} translations={translations} />
+		<Header lang={locale} translations={translations} />
 		<main class="ks-download-main">
 			<!-- Breadcrumb -->
 			<nav class="ks-breadcrumb" aria-label="Breadcrumb">
-				<a href="/keysync/">KeySync</a>
+				<a href={localeHref(locale, '/keysync/')}>KeySync</a>
 				<span class="ks-breadcrumb-sep" aria-hidden="true">/</span>
 				<span aria-current="page">{t.breadcrumb}</span>
 			</nav>
@@ -414,7 +421,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 				</div>
 			</section>
 		</main>
-		<Footer lang={DEFAULT_LOCALE} />
+		<Footer lang={locale} />
 
 		<!-- Download Tracking -->
 		<script is:inline define:vars={{ gadsId: SITE_GADS_ID, conversionId: GADS_CONVERSION_ID }}>

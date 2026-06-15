@@ -8,7 +8,7 @@ import BaseHead from '../../../components/BaseHead.astro';
 import Footer from '../../../components/Footer.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
 import Header from '../../../components/Header.astro';
-import { DEFAULT_LOCALE, HTML_LANG, NON_DEFAULT_LOCALES, stripLocaleFromId, type Locale } from '../../../i18n/config';
+import { DEFAULT_LOCALE, HTML_LANG, NON_DEFAULT_LOCALES, localeHref, stripLocaleFromId, type Locale } from '../../../i18n/config';
 import { useTranslations } from '../../../i18n/messages';
 
 export function getStaticPaths() {
@@ -113,7 +113,7 @@ const posts = (await getCollection('ref'))
 					{
 						posts.map(({ post, slug }) => (
 							<li class="post-card">
-								<a href={`/ref/${slug}/`}>
+								<a href={localeHref(locale, `/ref/${slug}/`)}>
 									{post.data.heroImage && (
 										<Image
 											width={720}

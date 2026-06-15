@@ -7,7 +7,7 @@ import Footer from '../../../components/Footer.astro';
 import Header from '../../../components/Header.astro';
 import { Image } from 'astro:assets';
 import keysyncScreenshot from '../../../assets/keysync-screenshot.png';
-import { HTML_LANG, NON_DEFAULT_LOCALES, type Locale } from '../../../i18n/config';
+import { HTML_LANG, NON_DEFAULT_LOCALES, localeHref, type Locale } from '../../../i18n/config';
 import { useTranslations } from '../../../i18n/messages';
 import { ImageMetadata } from 'astro:assets';
 import appleLogo from '../../../assets/apple.svg';
@@ -353,7 +353,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 					<p class="ks-sub" set:html={t.hero.sub} />
 				<!-- Desktop CTA (hidden on mobile/tablet < 1024px) -->
 					<div class="ks-cta-row ks-desktop-cta">
-						<a href="/keysync/download/" class="button primary">
+						<a href={localeHref(locale, '/keysync/download/')} class="button primary">
 							{t.hero.ctaDownload}
 							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 						</a>
@@ -373,7 +373,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 						<p class="ks-mobile-cta-desc">{t.hero.mobileCta.desc}</p>
 
 						<div class="ks-mobile-url-display">
-							<span class="ks-mobile-url">sublang.ai/keysync/download/</span>
+							<span class="ks-mobile-url">sublang.ai{localeHref(locale, '/keysync/download/')}</span>
 							<button class="ks-mobile-copy-btn-primary" id="mobile-cta-copy" type="button">
 								<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 									<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -707,7 +707,7 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 						<p>{t.finalCta.body}</p>
 						<!-- Desktop CTA -->
 						<div class="ks-cta-row ks-center ks-desktop-cta">
-							<a href="/keysync/download/" class="button primary">
+							<a href={localeHref(locale, '/keysync/download/')} class="button primary">
 								{t.finalCta.ctaDownload}
 								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
 							</a>
@@ -734,9 +734,9 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 		<Footer lang={locale} />
 
 		<!-- Mobile CTA Functionality -->
-		<script is:inline>
+		<script is:inline define:vars={{ installUrl: `https://sublang.ai${localeHref(locale, '/keysync/download/')}` }}>
 			(function () {
-				var INSTALL_URL = 'https://sublang.ai/keysync/download/';
+				var INSTALL_URL = installUrl;
 				var TOAST_DURATION = 2000;
 
 				function copyToClipboard(text, button) {

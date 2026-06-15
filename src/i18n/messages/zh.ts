@@ -141,7 +141,7 @@ export const messages: MessageShape = {
 		product: '产品',
 		productLabel: 'KeySync',
 		productMenuItems: [
-			{ label: 'KeySync', href: '/keysync/' },
+			{ label: 'KeySync', href: '/zh/keysync/' },
 		],
 		engineering: '工程',
 		languageLabel: '语言',
@@ -161,7 +161,7 @@ export const messages: MessageShape = {
 		description:
 			'SubLang 探索面向数据管理与编程的语言模型，以及人类可读系统的实践。我们发表参考文章和工程笔记，服务于构建表达性软件的团队。',
 		ctaPrimary: '阅读工程',
-		ctaPrimaryHref: '/engineering/',
+		ctaPrimaryHref: '/zh/engineering/',
 		ctaGitHub: '在 GitHub 探索',
 		ctaX: '在 X 关注',
 		focusTitle: '当前关注',
@@ -184,8 +184,8 @@ export const messages: MessageShape = {
 			{
 				name: 'KeySync',
 				description: '一个配置，同步到所有 AI 智能体。让提供商、密钥和模型在多台设备间保持一致。',
-				learnMoreHref: '/keysync/',
-				downloadHref: '/keysync/download/',
+				learnMoreHref: '/zh/keysync/',
+				downloadHref: '/zh/keysync/download/',
 			},
 		],
 	},

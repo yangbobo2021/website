@@ -32,6 +32,25 @@ const posts = (await getCollection('blog'))
 	})
 	.filter((value) => value !== null)
 	.sort((a, b) => b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf());
+
+const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const blogSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'Blog',
+	'@id': `${siteOrigin}${localeHref(locale, '/blog/')}#blog`,
+	name: t.pageTitle,
+	description: t.pageDescription,
+	url: `${siteOrigin}${localeHref(locale, '/blog/')}`,
+	inLanguage: HTML_LANG[locale],
+	blogPost: posts.map(({ post, slug }) => ({
+		'@type': 'BlogPosting',
+		headline: post.data.title,
+		description: post.data.description,
+		url: `${siteOrigin}${localeHref(locale, `/blog/${slug}/`)}`,
+		datePublished: post.data.pubDate.toISOString(),
+		...(post.data.updatedDate ? { dateModified: post.data.updatedDate.toISOString() } : {}),
+	})),
+};
 ---
 
 <!doctype html>
@@ -107,6 +126,7 @@ const posts = (await getCollection('blog'))
 				}
 			}
 		</style>
+		<script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 	</head>
 	<body>
 		<Header lang={locale} translations={translations} />

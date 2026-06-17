@@ -10,6 +10,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_AUTHOR, SITE_TITLE } from '../consts';
 import { DEFAULT_LOCALE, HTML_LANG, type Locale, localeHref } from '../i18n/config';
+import { useTranslations } from '../i18n/messages';
 
 type Props = CollectionEntry<'ref'>['data'] & {
 	lang?: Locale;
@@ -127,6 +128,38 @@ const articleSchema = {
 			}
 		: {}),
 };
+
+// Breadcrumb: Home › <section> › <post>. `ref` posts live under /ref/ but are
+// listed in the Engineering section, so the parent crumb maps off `base`.
+const nav = useTranslations(activeLocale).nav;
+const section =
+	base === '/blog'
+		? { label: nav.blog, path: '/blog/' }
+		: { label: nav.engineering, path: '/engineering/' };
+const breadcrumbSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'BreadcrumbList',
+	itemListElement: [
+		{
+			'@type': 'ListItem',
+			position: 1,
+			name: nav.home,
+			item: `${siteOrigin}${localeHref(activeLocale, '/')}`,
+		},
+		{
+			'@type': 'ListItem',
+			position: 2,
+			name: section.label,
+			item: `${siteOrigin}${localeHref(activeLocale, section.path)}`,
+		},
+		{
+			'@type': 'ListItem',
+			position: 3,
+			name: title,
+			item: canonicalURL.toString(),
+		},
+	],
+};
 ---
 
 <html lang={HTML_LANG[activeLocale]}>
@@ -142,6 +175,7 @@ const articleSchema = {
 		/>
 		<meta name="author" content={postAuthor.name} />
 		<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+		<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 		<style>
 			main {
 				max-width: var(--grid-max);

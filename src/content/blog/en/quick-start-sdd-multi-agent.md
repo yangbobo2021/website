@@ -1,7 +1,7 @@
 ---
 # SPDX-License-Identifier: CC-BY-SA-4.0
 # SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
-title: 'How to Get Started Fast with SDD + Multi-Agent Long-Horizon Tasks'
+title: 'Get Started with SDD + Multi-Agent Long-Horizon Tasks'
 description: 'Use spec-driven development (SDD) to turn fragile conversation context into a shared source of truth, so multiple AI agents collaborate on long-horizon tasks without drifting — the shortest path you can start today.'
 pubDate: 2026-06-17
 categories:

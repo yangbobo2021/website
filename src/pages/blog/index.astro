@@ -8,7 +8,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
-import { DEFAULT_LOCALE, stripLocaleFromId } from '../../i18n/config';
+import { DEFAULT_LOCALE, HTML_LANG, stripLocaleFromId } from '../../i18n/config';
 import { useTranslations } from '../../i18n/messages';
 
 const translations = { en: '/blog/', zh: '/zh/blog/' } as const;
@@ -25,6 +25,25 @@ const posts = (await getCollection('blog'))
 	})
 	.filter((value) => value !== null)
 	.sort((a, b) => b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf());
+
+const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const blogSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'Blog',
+	'@id': `${siteOrigin}/blog/#blog`,
+	name: t.pageTitle,
+	description: t.pageDescription,
+	url: `${siteOrigin}/blog/`,
+	inLanguage: HTML_LANG[DEFAULT_LOCALE],
+	blogPost: posts.map(({ post, slug }) => ({
+		'@type': 'BlogPosting',
+		headline: post.data.title,
+		description: post.data.description,
+		url: `${siteOrigin}/blog/${slug}/`,
+		datePublished: post.data.pubDate.toISOString(),
+		...(post.data.updatedDate ? { dateModified: post.data.updatedDate.toISOString() } : {}),
+	})),
+};
 ---
 
 <!doctype html>
@@ -100,6 +119,7 @@ const posts = (await getCollection('blog'))
 				}
 			}
 		</style>
+		<script type="application/ld+json" set:html={JSON.stringify(blogSchema)} />
 	</head>
 	<body>
 		<Header lang={DEFAULT_LOCALE} translations={translations} />

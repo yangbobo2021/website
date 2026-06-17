@@ -1,8 +1,8 @@
 ---
 # SPDX-License-Identifier: CC-BY-SA-4.0
 # SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
-title: 'GEARS：AI 原生软件开发中的规约（Spec）语法'
-description: '通用 EARS 格式简介——为 AI 原生软件工程设计的规约语法'
+title: 'GEARS：AI 原生软件开发中的规约（Spec）格式'
+description: 'GEARS 格式简介——为 AI 原生软件工程设计的规约语法'
 pubDate: 2026-05-11
 heroImage: ../../../assets/gears-hero.png
 heroImageAlt: 'GEARS 的应用'

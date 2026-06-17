@@ -6,22 +6,28 @@ import rss from '@astrojs/rss';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { DEFAULT_LOCALE, stripLocaleFromId } from '../i18n/config';
 
-export async function GET(context) {
-	const posts = (await getCollection('ref'))
+async function collect(collection, base) {
+	return (await getCollection(collection))
 		.map((post) => {
 			const parsed = stripLocaleFromId(post.id);
 			if (!parsed || parsed.locale !== DEFAULT_LOCALE) return null;
-			return { post, slug: parsed.slug };
+			return { post, link: `${base}/${parsed.slug}/` };
 		})
 		.filter((value) => value !== null);
+}
+
+export async function GET(context) {
+	const items = [...(await collect('ref', '/ref')), ...(await collect('blog', '/blog'))].sort(
+		(a, b) => b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf(),
+	);
 
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
 		site: context.site,
-		items: posts.map(({ post, slug }) => ({
+		items: items.map(({ post, link }) => ({
 			...post.data,
-			link: `/ref/${slug}/`,
+			link,
 		})),
 	});
 }

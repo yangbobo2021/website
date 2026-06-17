@@ -1,0 +1,145 @@
+---
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
+
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { DEFAULT_LOCALE, stripLocaleFromId } from '../../i18n/config';
+import { useTranslations } from '../../i18n/messages';
+
+const translations = { en: '/blog/', zh: '/zh/blog/' } as const;
+const alternates = (Object.entries(translations) as Array<[keyof typeof translations, string]>).map(
+	([locale, path]) => ({ locale, href: new URL(path, Astro.site).toString() }),
+);
+const t = useTranslations(DEFAULT_LOCALE).blog;
+
+const posts = (await getCollection('blog'))
+	.map((post) => {
+		const parsed = stripLocaleFromId(post.id);
+		if (!parsed || parsed.locale !== DEFAULT_LOCALE) return null;
+		return { post, slug: parsed.slug };
+	})
+	.filter((value) => value !== null)
+	.sort((a, b) => b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf());
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={t.pageTitle}
+			description={t.pageDescription}
+			lang={DEFAULT_LOCALE}
+			alternates={alternates}
+		/>
+		<style>
+			.page-intro {
+				max-width: 720px;
+				margin-bottom: 2.5rem;
+			}
+			.post-grid {
+				display: grid;
+				gap: 2rem;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			}
+			.post-card {
+				display: flex;
+				flex-direction: column;
+				gap: 0.8rem;
+				padding: 1.6rem;
+				border-radius: var(--radius-lg);
+				background: var(--surface);
+				border: 1px solid var(--line);
+				box-shadow: 0 18px 40px rgba(21, 22, 26, 0.08);
+				transition: transform 0.2s ease, border-color 0.2s ease;
+			}
+			.post-card img {
+				border-radius: var(--radius-md);
+			}
+			.post-card a {
+				border-bottom: none;
+			}
+			.post-card:hover {
+				transform: translateY(-4px);
+				border-color: rgba(137, 15, 188, 0.35);
+			}
+			.title {
+				margin: 0;
+				color: var(--ink);
+				line-height: 1.2;
+				font-family: var(--font-display);
+				font-size: 1.3rem;
+				text-transform: none;
+				letter-spacing: var(--tracking-tight);
+			}
+			.date {
+				margin: 0;
+				color: var(--ink-muted);
+				font-size: 0.9rem;
+			}
+			.excerpt {
+				margin: 0.2rem 0 0;
+				color: var(--ink-soft);
+				font-size: 0.95rem;
+				line-height: 1.5;
+			}
+			.empty {
+				color: var(--ink-muted);
+				font-size: 1rem;
+			}
+			@media (max-width: 720px) {
+				.post-grid {
+					gap: 1.2rem;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<Header lang={DEFAULT_LOCALE} translations={translations} />
+		<main>
+			<section class="page-intro">
+				<span class="eyebrow">{t.eyebrow}</span>
+				<h1>{t.title}</h1>
+			</section>
+			<section>
+				{
+					posts.length === 0 ? (
+						<p class="empty">{t.empty}</p>
+					) : (
+						<ul class="post-grid">
+							{posts.map(({ post, slug }) => (
+								<li class="post-card">
+									<a href={`/blog/${slug}/`}>
+										{post.data.heroImage && (
+											<Image
+												width={720}
+												height={Math.round(
+													(post.data.heroImage.height / post.data.heroImage.width) * 720,
+												)}
+												src={post.data.heroImage}
+												alt={post.data.heroImageAlt ?? post.data.title}
+											/>
+										)}
+										<h4 class="title">{post.data.title}</h4>
+										<p class="excerpt">{post.data.description}</p>
+										<p class="date">
+											<FormattedDate date={post.data.pubDate} />
+										</p>
+									</a>
+								</li>
+							))}
+						</ul>
+					)
+				}
+			</section>
+		</main>
+		<Footer lang={DEFAULT_LOCALE} />
+	</body>
+</html>

@@ -10,23 +10,30 @@ export async function getStaticPaths() {
 	return NON_DEFAULT_LOCALES.map((locale) => ({ params: { locale } }));
 }
 
-export async function GET(context) {
-	const locale = context.params.locale;
-	const posts = (await getCollection('ref'))
+async function collect(collection, locale, base) {
+	return (await getCollection(collection))
 		.map((post) => {
 			const parsed = stripLocaleFromId(post.id);
 			if (!parsed || parsed.locale !== locale) return null;
-			return { post, slug: parsed.slug };
+			return { post, link: `/${locale}${base}/${parsed.slug}/` };
 		})
 		.filter((value) => value !== null);
+}
+
+export async function GET(context) {
+	const locale = context.params.locale;
+	const items = [
+		...(await collect('ref', locale, '/ref')),
+		...(await collect('blog', locale, '/blog')),
+	].sort((a, b) => b.post.data.pubDate.valueOf() - a.post.data.pubDate.valueOf());
 
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
 		site: context.site,
-		items: posts.map(({ post, slug }) => ({
+		items: items.map(({ post, link }) => ({
 			...post.data,
-			link: `/${locale}/ref/${slug}/`,
+			link,
 		})),
 	});
 }

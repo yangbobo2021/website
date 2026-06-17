@@ -18,6 +18,7 @@ const nav = t.nav;
 const f = t.footer;
 const today = new Date();
 const engineeringAvailable = isRouteAvailable('/engineering/', activeLocale);
+const blogAvailable = isRouteAvailable('/blog/', activeLocale);
 ---
 
 <footer class="site-footer">
@@ -34,6 +35,13 @@ const engineeringAvailable = isRouteAvailable('/engineering/', activeLocale);
 			) : (
 				<span class="link-unavailable" aria-disabled="true" title={nav.unavailableTitle}>
 					{f.linkEngineering}
+				</span>
+			)}
+			{blogAvailable ? (
+				<a href={localeHref(activeLocale, '/blog/')}>{f.linkBlog}</a>
+			) : (
+				<span class="link-unavailable" aria-disabled="true" title={nav.unavailableTitle}>
+					{f.linkBlog}
 				</span>
 			)}
 		</nav>

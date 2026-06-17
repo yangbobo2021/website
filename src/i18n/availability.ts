@@ -15,6 +15,7 @@ import { DEFAULT_LOCALE, type Locale } from './config';
 export const ROUTE_AVAILABILITY: Record<string, readonly Locale[]> = {
 	'/': ['en', 'zh'],
 	'/engineering/': ['en', 'zh'],
+	'/blog/': ['en', 'zh'],
 	'/keysync/': ['en', 'zh'],
 	'/keysync/download/': ['en', 'zh'],
 };

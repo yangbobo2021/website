@@ -11,6 +11,7 @@ type MessageShape = {
 		productLabel: string;
 		productMenuItems: Array<{ label: string; href: string }>;
 		engineering: string;
+		blog: string;
 		languageLabel: string;
 		unavailableTitle: string;
 		menuOpen: string;
@@ -45,6 +46,13 @@ type MessageShape = {
 		title: string;
 		pageTitle: string;
 		pageDescription: string;
+	};
+	blog: {
+		eyebrow: string;
+		title: string;
+		pageTitle: string;
+		pageDescription: string;
+		empty: string;
 	};
 	keysync: {
 		pageTitle: string;
@@ -130,6 +138,7 @@ type MessageShape = {
 		linkGitHub: string;
 		linkX: string;
 		linkEngineering: string;
+		linkBlog: string;
 		copyright: (year: number) => string;
 	};
 	consent: { text: string; accept: string; reject: string };
@@ -144,6 +153,7 @@ export const messages: MessageShape = {
 			{ label: 'KeySync', href: '/zh/keysync/' },
 		],
 		engineering: '工程',
+		blog: '博客',
 		languageLabel: '语言',
 		unavailableTitle: '当前页面暂无该语言版本',
 		menuOpen: '打开菜单',
@@ -195,6 +205,14 @@ export const messages: MessageShape = {
 		pageTitle: '工程',
 		pageDescription:
 			'面向 AI 驱动软件开发的技术栈、架构与规范实践。',
+	},
+	blog: {
+		eyebrow: '博客',
+		title: '实践笔记与一线报告',
+		pageTitle: '博客',
+		pageDescription:
+			'关于规范、智能体与 AI 时代软件开发的实践笔记。',
+		empty: '暂无文章，敬请期待。',
 	},
 	keysync: {
 		pageTitle: 'KeySync — 一个配置，同步到所有 AI 智能体',
@@ -433,6 +451,7 @@ export const messages: MessageShape = {
 		linkGitHub: 'GitHub',
 		linkX: 'X / Twitter',
 		linkEngineering: '工程',
+		linkBlog: '博客',
 		copyright: (year: number) => `© ${year} SubLang International.`,
 	},
 	consent: {

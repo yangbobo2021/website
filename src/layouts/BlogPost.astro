@@ -15,6 +15,8 @@ type Props = CollectionEntry<'ref'>['data'] & {
 	lang?: Locale;
 	availableLocales?: readonly Locale[];
 	postSlug?: string;
+	/** Route namespace the post is served under, e.g. `/ref` or `/blog`. */
+	basePath?: string;
 };
 
 const {
@@ -32,19 +34,21 @@ const {
 	lang,
 	availableLocales,
 	postSlug,
+	basePath,
 } = Astro.props;
 const activeLocale: Locale = lang ?? DEFAULT_LOCALE;
 const translations = availableLocales ?? [activeLocale];
+const base = basePath ?? '/ref';
 const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? new URL(Astro.url).origin;
 const alternates = postSlug
 	? translations.map((locale) => ({
 			locale,
-			href: `${siteOrigin}${localeHref(locale, `/ref/${postSlug}/`)}`,
+			href: `${siteOrigin}${localeHref(locale, `${base}/${postSlug}/`)}`,
 		}))
 	: undefined;
 const headerTranslations: Partial<Record<Locale, string>> = postSlug
 	? Object.fromEntries(
-			translations.map((locale) => [locale, localeHref(locale, `/ref/${postSlug}/`)]),
+			translations.map((locale) => [locale, localeHref(locale, `${base}/${postSlug}/`)]),
 		)
 	: {};
 const postAuthor = author ?? SITE_AUTHOR;

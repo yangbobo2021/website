@@ -10,6 +10,7 @@ export const messages = {
 			{ label: 'KeySync', href: '/keysync/' },
 		],
 		engineering: 'Engineering',
+		blog: 'Blog',
 		languageLabel: 'Language',
 		unavailableTitle: 'Not available in this language',
 		menuOpen: 'Open menu',
@@ -61,6 +62,14 @@ export const messages = {
 		pageTitle: 'Engineering',
 		pageDescription:
 			'Tooling, architecture, and specification practice for AI-powered software development.',
+	},
+	blog: {
+		eyebrow: 'Blog',
+		title: 'Notes and field reports',
+		pageTitle: 'Blog',
+		pageDescription:
+			'Practical notes on specs, agents, and building software in the AI era.',
+		empty: 'No posts yet. Check back soon.',
 	},
 	keysync: {
 		pageTitle: 'KeySync — One config for every AI agent',
@@ -299,6 +308,7 @@ export const messages = {
 		linkGitHub: 'GitHub',
 		linkX: 'X / Twitter',
 		linkEngineering: 'Engineering',
+		linkBlog: 'Blog',
 		copyright: (year: number) => `© ${year} SubLang International.`,
 	},
 	consent: {

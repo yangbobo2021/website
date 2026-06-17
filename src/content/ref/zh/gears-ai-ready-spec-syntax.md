@@ -1,65 +1,65 @@
 ---
 # SPDX-License-Identifier: CC-BY-SA-4.0
 # SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
-title: 'GEARS：面向 AI 的规范语法'
-description: 'Generalized EARS 简介——为 AI 软件开发设计的规范语法'
+title: 'GEARS：AI 原生软件开发中的规约（Spec）语法'
+description: '通用 EARS 格式简介——为 AI 原生软件工程设计的规约语法'
 pubDate: 2026-05-11
 heroImage: ../../../assets/gears-hero.png
-heroImageAlt: 'GEARS 规范生命周期示意图'
+heroImageAlt: 'GEARS 的应用'
 categories:
   - engineering
 ---
 
-亚马逊的 Kiro 在其“规范驱动开发”流程中采用了 EARS（Easy Approach to Requirements Syntax，简明需求语法）。它推广了一种实践：把模糊的提示或上下文转写为格式清晰的规范（spec），让人和智能体都能更好理解。
+亚马逊的编程智能体 Kiro 在其规约驱动开发（SDD）流程中采用了 EARS（Easy Approach to Requirements Syntax，简明需求语法）。越来越多的 AI 软件开发实践，把模糊的提示词或上下文表达为格式清晰的规约（spec），让人和智能体都能更好理解。
 
-EARS 由 Alistair Mavin 和他在罗罗（Rolls-Royce）的同事们提出，已经成为编写清晰、可测需求的常用记法。其原始论文获得了 2019 年 IEEE 国际需求工程大会颁发的“十年最具影响力产业论文奖”。
+EARS 由 Alistair Mavin 和罗尔斯-罗伊斯（Rolls-Royce PLC）的同事们提出，经过多年广泛应用，已成为编写清晰可测的需求条目的常用格式。其原始论文获得了 2019 年 IEEE 国际需求工程大会“十年最具影响力产业论文奖”。
 
-然而，这套记法最初是为高层利益相关方需求而设计的，并未覆盖现代软件开发所需的完整规范谱系。在实际规范实践中使用 EARS，会暴露出一些摩擦点。
+然而，这套格式最初是面向需求方设计的，并未覆盖 AI 原生软件开发所需的完整规约体系。在实际规约驱动开发的实践中，直接使用 EARS 会暴露出一些局限。
 
-因此，我们提出 GEARS——Generalized EARS，或 Generalized Expression for AI-Ready Specs（面向 AI 规范的通用表达式）。它在保留 EARS 成功要素的同时，把语法扩展到 AI 编码时代下更广泛的规范用途。
+因此，我们提出 GEARS——Generalized EARS，或 Generalized Expression for AI-Ready Specs（AI 就绪的规约通用表达式），在保留 EARS 成功要素的同时，扩展其语法以适配 AI 时代更广泛的规约实践。
 
-## 什么是规范
+## 什么是规约
 
-规范（spec）是对系统需求和行为的自然语言描述。规范应当被版本管理，并与代码保持“最终一致”，从而成为 AI 理解系统的主要事实来源。从更宽泛的视角看，规范也可以描述对系统做出的决策、计划与变更，但 GEARS 不覆盖这些——它们属于辅助信息，在面向 AI 的提示或上下文中较少被引用。
+规约是对系统需求和行为的自然语言描述。规约应当被版本管理，并与代码保持“最终一致”，从而成为 AI 理解系统的主要事实来源。从广义来看，规约也可以描述对系统做出的决策、计划与变更，但 GEARS 语法不覆盖这些辅助信息，因其在智能体的提示词或上下文中较少被引用。
 
-规范是人类开发者的新“源代码”。我们认为，规范对 AI 时代的软件开发至关重要，原因有二：
+**规约是人类开发者新的“源代码”。**我们认为，规约对 AI 原生软件开发至关重要，原因有二：
 
-- 没有清晰的规范，人与大语言模型（LLM）之间、人与人之间的误解就会持续存在。规范是人类和 AI 开发者之间沟通的自然语言载体。
-- 即便有 AI 的能力加持，软件开发中仍然存在分工。清晰的规范有助于人和 LLM 理解并复用系统的各个组件。
+- 没有清晰的规约，人与大语言模型（LLM）之间、人与人之间的误解就会持续存在。规约是人类开发者和 AI 之间沟通的自然语言载体。
+- 即便有 AI 的能力加持，软件开发中仍然存在分工。清晰的规约有助于人和智能体理解并复用系统的各个组件。
 
-规范是迭代式的。这并不是回归瀑布模型。规范与代码一起，逐次迭代地从零起步、不断成长。
+**规约是迭代式的。**SDD 并不是回归瀑布模型。规约通常与代码一起，从零起步、逐次迭代、不断累积。
 
-规范可以由 AI 生成。这并不意味着每一行规范都要由人来写。通常，人类开发者从高层、有时甚至模糊的意图出发，与 AI 讨论；随后 AI 可以协助澄清要求、提出注意事项、补全细节，最后以合适的格式落笔成文。
+**规约可以由 AI 生成。**SDD 也不意味着每一行规约都要由人来写。通常，人类开发者从高层的、有时甚至模糊的意图出发，与 AI 讨论；随后 AI 可以协助澄清要求、提出注意事项、补全细节，最后以合适的格式落笔成文。
 
 ## 为什么使用 GEARS
 
-AI 需要一致性。结构可预期时，LLM 表现更好。规范格式充当了人类意图与 AI 执行之间的协议。缺少这一协议，误解就会在多轮迭代中扩散，带来不稳定和风险。
+AI 需要一致性。结构可预期时，LLM 表现更好。规约格式充当了人类意图与智能体执行之间的协议。缺少这一协议，误解就会在多轮迭代中扩散，带来不稳定和风险。
 
-人类同样需要它。AI 编码的瓶颈很少在 LLM 的能力本身，而在于我们能否清晰表达自己想要什么。受限的语法反而带来清晰：你不会想用自由散漫的散文，正是结构帮助我们达成精确。
+人类同样需要 GEARS；AI 编码的瓶颈很少在智能体的能力本身，而在于我们能否清晰表达自己想要什么。受限的语法反而带来清晰：不要用自由“散文体”描述需求，让结构帮助我们表达更准确。
 
-AI 降低了“最佳实践税”。GEARS 刻意保持轻量与直觉，无需繁重的工具或培训。正式规范、完整测试用例、可追溯需求——都很有价值，但都很昂贵。当 AI 起草、人类评审时，成本-收益的比率会发生显著变化。
+AI 降低了应用最佳实践的成本。GEARS 刻意保持轻量、直观，无需繁琐的工具或培训。规范化格式、完整测试用例、可追溯需求等都很有价值，但实现成本较高。而当我们可以让 AI 起草、人类只负责评审时，成本-收益的比率就会发生显著变化。
 
-测试用例应使用同一套语言。原始的 EARS 面向需求；测试框架则使用 BDD（行为驱动开发）风格的 Given-When-Then。维持两套心智模型会增加 LLM 的负担。GEARS 在同一语法下统一了两者。
+另外，测试用例最好使用同一套语言。原始的 EARS 面向需求；测试框架则可能使用 BDD（行为驱动开发）风格的 Given-When-Then。维持两套认知模型会增加 LLM 的负担。GEARS 在同一语法下统一了两者。
 
 ## GEARS 语法
 
 ```markdown
-[Where `<static precondition(s)>`]
-[While `<stateful precondition(s)>`]
-[When `<trigger>`]
-The `<subject>` shall `<behavior>`
+[给定 `<静态前置条件>`]
+[如果 `<状态前置条件>`]
+[当 `<触发条件>`]
+`<主体>` 将 `<行为>`
 ```
 
 | 关键字 | 含义 | 对应 GWT |
 | ------- | ------- | ----------- |
-| Where | 静态前置条件——配置、特性开关、环境 | Given（设置） |
-| While | 状态前置条件——执行期间必须成立的条件 | Given（状态） |
-| When | 触发——引发行为的事件 | When |
-| shall | 必需行为——主体必须做的事 | Then |
+| 给定/Where | 静态前置条件——配置、特性开关、环境 | Given/给定（设置） |
+| 如果/While | 状态前置条件——执行期间必须成立的条件 | Given/给定（状态） |
+| 当/When | 触发条件——引发行为的事件 | When/当 |
+| 将/shall | 所要求的行为——主体必须做的事 | Then/那么 |
 
-方括号表示可选子句。EARS 之所以使用 “the system shall…”，是因为它针对系统级需求。GEARS 把它替换为 `<subject>`——任意名词：系统、组件、服务、智能体、函数、产物。这样就允许在各种分解粒度上撰写规范。
+方括号表示可选子句。原 EARS 之所以使用“系统将……”，是因为它针对系统级需求。GEARS 把它替换为 `<主体>`——任意名词：系统、组件、服务、智能体、函数、产物。这样就允许在各种系统层级和粒度上表达规约。
 
-EARS 根据出现的关键字定义了五种模式：
+原 EARS 根据出现的关键字定义了五种模式：
 
 | 模式 | EARS 语法（被 GEARS 合并） |
 | ------- | ----------- |
@@ -71,89 +71,89 @@ EARS 根据出现的关键字定义了五种模式：
 
 GEARS 把这些都合并为一个统一模式，其差异由出现哪些可选子句来体现。这种抽象同时降低了 LLM 的认知负担和 token 成本。
 
-“非预期行为”这一情况值得专门提及。EARS 用 `If...then` 在视觉上把它标记成边界情况；GEARS 取消了这一区分。从结构上看，错误处理也只是一组触发-响应。“非预期”属于语义层面，而不属于语法层面。GEARS 优先考虑 AI 处理，而不是人眼扫读。
+“非预期行为”的模式需要注意。EARS 用 `If...then` 的不同格式在视觉上突出其为边界情况；GEARS 取消了这一区分，直接使用“将不……”。从结构上看，错误处理也只是一组触发-响应。“非预期”属于语义层面，而不属于语法层面。GEARS 优先考虑 AI 处理，而不是人眼扫读。
 
-EARS 用 “where” 表示可选特性，用 “while” 表示状态。GEARS 保留这两个关键字，但把语义讲得更清楚：
+原 EARS 用 “where” 表示可选特性，用 “while” 表示状态。GEARS 保留这两个关键字，但把语义规定得更清楚：
 
-- “where” 表示静态前置条件（配置、部署环境、特性开关）；
-- “while” 表示状态前置条件（运行期可能变化的条件）。
+- 给定/where 表示静态前置条件（配置、部署环境、特性开关）；
+- 如果/while 表示状态前置条件（运行期可能变化的条件）。
 
 区分示例：
 
-> Where the deployment is production, when a request fails, the service shall retry with exponential backoff.
+> 给定部署环境为生产环境，当请求失败时，服务将使用指数退避进行重试。
 >
-> While the circuit breaker is open, when a request arrives, the service shall return a cached response.
+> 如果熔断器处于打开状态，当请求到达时，服务将返回缓存响应。
 
 第一句是配置——执行期间不会改变；第二句是状态——可能在任意时刻发生转移。
 
 ## GEARS 示例
 
-- 普适：The `<subject>` shall `<behavior>`.
+- 普适：`<主体>` 将 `<行为>`。
 
-  > The mobile phone shall have a mass of less than 150 grams.
+  > 手机的质量将小于 150 克。
 
-- 状态驱动：While `<stateful precondition(s)>`, the `<subject>` shall `<behavior>`.
+- 状态驱动：如果 `<状态前置条件>`，`<主体>` 将 `<行为>`。
 
-  > While no card is inserted, the ATM shall display "insert card to begin".
+  > 如果未插入银行卡，ATM 将显示“请插入银行卡”。
 
-- 事件驱动：When `<trigger>`, the `<subject>` shall `<behavior>`.
+- 事件驱动：当 `<触发条件>`，`<主体>` 将 `<行为>`。
 
-  > When the user selects mute, the audio controller shall suppress all output.
+  > 当用户选择静音时，音频控制器将抑制所有输出。
   >
-  > When the cache exceeds 80% capacity, the eviction policy shall remove the least recently used entries until capacity falls below 60%.
+  > 当缓存超过 80% 容量时，淘汰策略将移除最近最少使用的条目，直到容量降至 60% 以下。
 
-- 可选特性：Where `<static precondition(s)>`, the `<subject>` shall `<behavior>`.
+- 可选特性：给定 `<静态前置条件>`，`<主体>` 将 `<行为>`。
 
-  > Where sunroof is installed, the vehicle shall include a sunroof control on the driver door.
+  > 给定车辆安装了天窗，车辆将在驾驶员侧车门上包含天窗控制装置。
 
 - 复合（状态 + 事件）
 
-  > Where the user has granted file system access, when the user requests code generation, the coding agent shall write output to the specified directory.
+  > 给定用户已授予文件系统访问权限，当用户请求生成代码时，编程智能体将把输出写入指定目录。
 
 - 错误处理
 
-  > When an invalid credit card number is entered, the payment form shall display "please re-enter credit card details".
+  > 当输入无效信用卡号时，支付表单将显示“请重新输入信用卡信息”。
 
 - 否定式表达
 
-  > When an unauthenticated request arrives, the API shall not include stack traces in the response.
+  > 当未经身份验证的请求到达时，API 将不在响应中包含堆栈跟踪。
 
 - 测试用例
 
-  > Given the user is authenticated\
-  > And the session is active\
-  > When the user requests their profile\
-  > Then the API returns the user's profile data
+  > 给定用户已通过身份验证\
+  > 且会话处于活动状态\
+  > 当用户请求自己的个人资料\
+  > 那么 API 返回用户的个人资料数据
 
   转写为 GEARS：
 
-  > While the user is authenticated and the session is active, when the user requests their profile, the API shall return the user's profile data.
+  > 如果用户已通过身份验证且会话处于活动状态，当用户请求自己的个人资料时，API 将返回用户的个人资料数据。
 
 ## 应用
 
-要让 LLM 理解 GEARS 并用它来写规范，只需把下面这段短文放进你的提示词，或 CLAUDE.md / AGENTS.md 文件即可。
+要让 LLM 理解 GEARS 并据此写规约，只需把下面这段文字放进你的提示词，或 CLAUDE.md / AGENTS.md 文件即可。
 
 ```markdown
-Each spec shall use the [GEARS](https://sublang.ai/ref/gears-ai-ready-spec-syntax) pattern:
+每条规约将遵从[GEARS](https://sublang.ai/zh/ref/gears-ai-ready-spec-syntax/)格式：
 
-[Where `<static precondition(s)>`] [While `<stateful precondition(s)>`] [When `<trigger>`] The `<subject>` shall `<behavior>`.
+[给定 `<静态前置条件>`] [如果 `<状态前置条件>`] [当 `<触发条件>`] `<主体>` 将 `<行为>`。
 
-| Clause | Purpose | Example |
+| 子句 | 用途 | 示例 |
 | ------ | ------- | ------- |
-| Where | Static preconditions (features, config) | Where debug mode is enabled |
-| While | Stateful preconditions (runtime state) | While the connection is active |
-| When | Trigger event (at most one) | When the user clicks submit |
-| shall | Required behavior | The form shall validate inputs |
+| 给定/Where | 静态前置条件（特性、配置） | 给定调试模式已启用 |
+| 如果/While | 状态前置条件（运行时状态） | 如果连接处于活动状态 |
+| 当/When | 触发事件（最多一个） | 当用户点击提交 |
+| 将/shall | 所要求的行为 | 表单将校验输入 |
 
-Note: Clause keywords and punctuation follow natural language conventions.
+注意：子句关键字和标点遵循自然语言惯例。
 
-Test specs shall use the same pattern, mapping Given-When-Then:
+测试规约将使用同一模式，并映射 Given-When-Then：
 
-| GWT | Clause |
+| GWT | 子句 |
 | --- | ------ |
-| Given | Where + While |
-| When | When |
-| Then | shall |
+| Given/给定 | 给定/Where + 如果/While |
+| When/当 | 当/When |
+| Then/那么 | 将/shall |
 ```
 
 要把 GEARS 应用到你的项目中，我们准备了一个脚手架工具：
@@ -169,25 +169,25 @@ spex scaffold
 specs/
 ├── decisions/    # 决策记录（DRs）
 ├── iterations/   # 迭代记录（IRs）
-├── user/         # 面向用户的规范
-├── dev/          # 开发规范
-└── test/         # 验证规范
+├── user/         # 用户可见行为规约
+├── dev/          # 系统内部行为规约
+└── test/         # 测试验证规约
 ```
 
-规范文件可以按目录层级组织。记录类文件并不严格遵循 GEARS。
+规约文件可以按目录层级组织。记录类文件（DR 和 IR）并不严格遵循 GEARS。
 
-⭐ 如果你觉得这个工具有帮助，欢迎给 <https://github.com/sublang-ai/spex> 点个 Star。
+⭐ 如果你觉得这个工具有帮助，欢迎给 <https://github.com/sublang-ai/spex> 点个 Star，持续关注更新 💜
 
 ## 总结
 
 GEARS 在四个方面扩展了 EARS：
 
-1. **通用化主体**：用任意名词——系统、组件、智能体、产物——替代 “the system”。
-2. **统一模式**：一套语法覆盖所有情况；不再为特性、状态、事件、错误设置不同模式。
-3. **明确的前置条件**：Where 表示静态配置，While 表示动态状态。
-4. **测试用例的等价表达**：语法可以直接映射到 Given-When-Then，无须再为规范和测试维护两套语言。
+1. **通用化主体**：用任意名词——系统、组件、智能体、产物——替代“系统”，适配规约更广泛的应用范围。
+2. **统一模式**：一套语法覆盖所有情况；不再为特性、状态、事件、错误设置不同模式，减少 LLM 认知负担和 token 成本。
+3. **明确的前置条件**：给定/Where 表示静态配置，如果/While 表示状态条件，有助消除语义模糊。
+4. **测试用例的等价表达**：语法可以直接映射到 Given-When-Then，无需为规约和测试维护两套语言。
 
-由此得到的规范语法面向 AI 驱动的开发：**对 LLM 足够一致**以便可靠解析，**对人类足够富有表达力**以便自然书写，**足够统一**以使规范与测试合而为一。
+由此得到的规约语法，为 AI 原生软件开发而生：**足够一致**让 LLM 能可靠解析，**足够有表达力**让人或智能体能自然书写，**足够统一**让规约与测试描述合而为一。
 
 ## 参考文献
 
@@ -195,4 +195,4 @@ GEARS 在四个方面扩展了 EARS：
 2. Mavin, A. (2009). Easy Approach to Requirements Syntax (EARS). <https://alistairmavin.com/ears>
 3. North, D. (2006). Introducing BDD. <https://dannorth.net/introducing-bdd/>
 
-> AI 使用声明：本文中文版由 Claude Opus 4.7 据英文原文翻译。英文原稿由人撰写，Claude Opus 4.5 与 GPT-5.2 仅用于其语言润色。
+> AI 使用声明：本文原稿由人撰写，Claude Opus 4.5 与 GPT-5.2 仅用于语言润色。

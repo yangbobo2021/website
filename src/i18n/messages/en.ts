@@ -236,6 +236,13 @@ export const messages = {
 				},
 			],
 		},
+		contactQr: {
+			eyebrow: 'Contact',
+			title: 'Want KeySync for your team? Contact us',
+			body: 'For trials, deployment, team purchasing, or configuration migration support, reach out to us.',
+			caption: 'Scan to contact us',
+			alt: 'QR code to contact KeySync support',
+		},
 		finalCta: {
 			title: 'Set it once. <span>Sync it everywhere.</span>',
 			body: 'Download the desktop client, connect your first provider, and push your config to every AI agent in under a minute.',

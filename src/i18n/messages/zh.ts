@@ -106,6 +106,13 @@ type MessageShape = {
 			title: string;
 			items: Array<{ q: string; a: string }>;
 		};
+		contactQr: {
+			eyebrow: string;
+			title: string;
+			body: string;
+			caption: string;
+			alt: string;
+		};
 		finalCta: {
 			title: string;
 			body: string;
@@ -378,6 +385,13 @@ export const messages: MessageShape = {
 					a: '不需要。KeySync 写入的就是各智能体已经在读取的配置文件。无需集成什么，也无需学习什么新工具——KeySync 位于它们底层的配置层，不是另一个智能体。',
 				},
 			],
+		},
+		contactQr: {
+			eyebrow: '联系我们',
+			title: '想给团队配置 KeySync？扫码联系小逸',
+			body: '需要试用、部署、团队采购或配置迁移支持，可以扫码添加我们。',
+			caption: '微信扫码联系 / 手机长按识别',
+			alt: '联系小逸的微信二维码',
 		},
 		finalCta: {
 			title: '配置一次。<span>同步到所有设备。</span>',

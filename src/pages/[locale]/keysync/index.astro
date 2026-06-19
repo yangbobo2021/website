@@ -7,6 +7,7 @@ import Footer from '../../../components/Footer.astro';
 import Header from '../../../components/Header.astro';
 import { Image } from 'astro:assets';
 import keysyncScreenshot from '../../../assets/keysync-screenshot.png';
+import xiaoyiQrCode from '../../../assets/xiaoyi-qr-code.png';
 import { HTML_LANG, NON_DEFAULT_LOCALES, localeHref, type Locale } from '../../../i18n/config';
 import { useTranslations } from '../../../i18n/messages';
 import { ImageMetadata } from 'astro:assets';
@@ -22,6 +23,7 @@ export function getStaticPaths() {
 
 const { locale } = Astro.params as { locale: Locale };
 const t = useTranslations(locale).keysync;
+const showContactQr = locale === 'zh';
 
 const platformLogos: Record<string, { src: ImageMetadata; alt: string }> = {
 	macOS: { src: appleLogo, alt: 'macOS' },
@@ -698,6 +700,30 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 					</div>
 					</div>
 				</section>
+
+			{showContactQr && (
+				<section class="ks-band ks-contact-qr" aria-labelledby="ks-contact-qr-title">
+					<div class="ks-wrap">
+						<div class="ks-contact-qr-card">
+							<div class="ks-contact-qr-copy">
+								<div class="ks-sec-eyebrow">{t.contactQr.eyebrow}</div>
+								<h2 class="ks-contact-qr-title" id="ks-contact-qr-title">{t.contactQr.title}</h2>
+								<p>{t.contactQr.body}</p>
+							</div>
+							<figure class="ks-contact-qr-figure">
+								<div class="ks-contact-qr-frame">
+									<Image
+										src={xiaoyiQrCode}
+										alt={t.contactQr.alt}
+										class="ks-contact-qr-image"
+									/>
+								</div>
+								<figcaption>{t.contactQr.caption}</figcaption>
+							</figure>
+						</div>
+					</div>
+				</section>
+			)}
 
 			<!-- FINAL CTA -->
 			<section class="ks-band ks-final" id="get-started">
@@ -1524,6 +1550,66 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 		max-width: 64ch;
 	}
 
+	/* ---------- CONTACT QR ---------- */
+	.ks-contact-qr-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 2.4rem;
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-lg);
+		background: var(--surface);
+		padding: clamp(2rem, 4vw, 3rem);
+		box-shadow: var(--ks-shadow-card);
+	}
+	.ks-contact-qr-title {
+		max-width: 18ch;
+		margin: 0;
+		font-size: clamp(1.65rem, 3vw, 2.35rem);
+		font-weight: 600;
+		line-height: 1.14;
+		letter-spacing: 0;
+		color: var(--ink);
+	}
+	.ks-contact-qr-copy p {
+		max-width: 42ch;
+		margin: 1rem 0 0;
+		color: var(--ink-soft);
+		font-size: 1.02rem;
+		line-height: 1.65;
+	}
+	.ks-contact-qr-figure {
+		margin: 0;
+		display: grid;
+		justify-items: center;
+		gap: 0.75rem;
+	}
+	.ks-contact-qr-frame {
+		width: 220px;
+		aspect-ratio: 1;
+		display: grid;
+		place-items: center;
+		padding: 0.65rem;
+		border: 1px solid var(--ks-line);
+		border-radius: var(--radius-md);
+		background: #fff;
+		box-shadow: 0 10px 24px rgba(21, 22, 26, 0.045);
+	}
+	.ks-contact-qr-image {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 6px;
+	}
+	.ks-contact-qr-figure figcaption {
+		color: var(--ink-muted);
+		font-family: var(--font-display);
+		font-size: 0.82rem;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		text-align: center;
+	}
+
 	.ks-download-files {
 		border-top: none;
 	}
@@ -1863,6 +1949,16 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 	@media (max-width: 840px) {
 		.ks-problem-grid,
 		.ks-sec-split { grid-template-columns: 1fr; gap: 2.4rem; }
+		.ks-contact-qr-card {
+			grid-template-columns: 1fr;
+			justify-items: center;
+			text-align: center;
+		}
+		.ks-contact-qr-title,
+		.ks-contact-qr-copy p {
+			margin-left: auto;
+			margin-right: auto;
+		}
 		.ks-steps { grid-template-columns: 1fr; }
 		.ks-download-card-grid { grid-template-columns: 1fr; }
 		.ks-download-choice { min-height: auto; }
@@ -1873,6 +1969,8 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 	@media (max-width: 720px) {
 		.ks-wrap { padding: 0 1.2rem; }
 		.ks-cta-row { flex-direction: column; align-items: stretch; }
+		.ks-contact-qr-card { padding: 1.6rem 1.25rem; }
+		.ks-contact-qr-frame { width: clamp(176px, 72vw, 220px); }
 		.ks-download-grid { grid-template-columns: 1fr; }
 		.ks-trust { gap: 0.8rem 1.2rem; }
 		.ks-drift-visual { max-width: 100%; }

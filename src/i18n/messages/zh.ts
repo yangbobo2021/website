@@ -136,7 +136,7 @@ type MessageShape = {
 		};
 		cli: { generic: (arch: string) => string; universal: string };
 		empty: { text: string; fallback: string };
-		manifest: { unavailable: string; released: (date: string) => string };
+		manifest: { loading: string; unavailable: string; released: (date: string) => string };
 		kindLabels: { installer: string; appimage: string; deb: string; portable: string; tarball: string };
 	};
 	footer: {
@@ -448,6 +448,7 @@ export const messages: MessageShape = {
 			fallback: '打开下载中心',
 		},
 		manifest: {
+			loading: '正在加载最新版本...',
 			unavailable: '清单不可用——使用下方备用链接。',
 			released: (date: string) => `发布于 ${date}`,
 		},

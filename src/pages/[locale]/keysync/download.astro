@@ -8,7 +8,6 @@ import Header from '../../../components/Header.astro';
 import { HTML_LANG, NON_DEFAULT_LOCALES, localeHref, type Locale } from '../../../i18n/config';
 import { useTranslations } from '../../../i18n/messages';
 import { GADS_CONVERSION_ID, SITE_GADS_ID } from '../../../consts';
-import { ImageMetadata } from 'astro:assets';
 import appleLogo from '../../../assets/apple.svg';
 import windowsLogo from '../../../assets/windows.svg';
 import linuxLogo from '../../../assets/linux.svg';
@@ -22,304 +21,33 @@ export function getStaticPaths() {
 const { locale } = Astro.params as { locale: Locale };
 const t = useTranslations(locale).keysyncDownload;
 
-const platformLogos: Record<string, { src: ImageMetadata; alt: string }> = {
-	macOS: { src: appleLogo, alt: 'macOS' },
-	Windows: { src: windowsLogo, alt: 'Windows' },
-	Linux: { src: linuxLogo, alt: 'Linux' },
-};
-
 const PAGE_TITLE = t.pageTitle;
 const PAGE_DESCRIPTION = t.pageDescription;
-const KEYSYNC_DOWNLOAD_URL = 'https://demo.signoff.bio/keysync/download';
+const KEYSYNC_DOWNLOAD_URL = 'https://keysync.sublang.ai/keysync/download';
 const KEYSYNC_LATEST_MANIFEST_URL = 'https://keysync.sublang.ai/keysync-updates/latest.json';
-
-const PLATFORM_PRIORITY = [
-	{ platform: 'macOS', kind: 'dmg', label: 'macOS' },
-	{ platform: 'Windows', kind: 'installer', label: 'Windows' },
-	{ platform: 'Linux', kind: 'appimage', label: 'Linux' },
-	{ platform: 'Linux CLI', kind: 'tar.gz', label: 'Linux CLI' },
-];
-const PLATFORM_ORDER = [
-	{ platform: 'macOS', label: 'macOS' },
-	{ platform: 'Windows', label: 'Windows' },
-	{ platform: 'Linux', label: 'Linux' },
-	{ platform: 'Linux CLI', label: 'Linux CLI' },
-];
-
-const ARCH_PRIORITY = ['arm64', 'x64', 'x86_64', 'amd64'];
-const LINUX_DOWNLOAD_ARCH_ORDER = ['x64', 'x86_64', 'amd64', 'arm64'];
-const KIND_LABELS: Record<string, string> = {
-	dmg: t.kindLabels.installer,
-	installer: t.kindLabels.installer,
-	appimage: t.kindLabels.appimage,
-	deb: t.kindLabels.deb,
-	portable: t.kindLabels.portable,
-	'tar.gz': t.kindLabels.tarball,
-};
-
-type ManifestArtifact = {
-	platform: string;
-	kind?: string;
-	arch?: string;
-	version?: string;
-	fileName: string;
-	url: string;
-	size?: number | string;
-	sha512?: string;
-};
-
-function toNumber(value: unknown): number {
-	if (typeof value === 'number' && Number.isFinite(value)) {
-		return value;
-	}
-	if (typeof value === 'string') {
-		const parsed = Number(value);
-		if (Number.isFinite(parsed)) {
-			return parsed;
-		}
-	}
-	return 0;
-}
-
-function formatBytes(bytes: number | string) {
-	const sizeNumber = toNumber(bytes);
-	if (!sizeNumber || sizeNumber <= 0) return 'Unknown size';
-	const units = ['B', 'KB', 'MB', 'GB'];
-	let size = sizeNumber;
-	let unit = 0;
-	while (size >= 1024 && unit < units.length - 1) {
-		size /= 1024;
-		unit += 1;
-	}
-	return `${size.toFixed(1)} ${units[unit]}`;
-}
-
-function pickArtifact(
-	artifacts: {
-		platform: string;
-		kind?: string;
-		arch?: string;
-		version?: string;
-		fileName: string;
-		url: string;
-		size?: number | string;
-	}[],
-	platform: string,
-	kind: string,
-) {
-	const target = artifacts.filter(
-		(item) => item.platform === platform && (item.kind ?? '').toLowerCase() === kind.toLowerCase(),
-	);
-	if (target.length === 0) {
-		return null;
-	}
-	const ordered = [...target].sort((a, b) => {
-		const ai = ARCH_PRIORITY.indexOf((a.arch ?? '').toLowerCase());
-		const bi = ARCH_PRIORITY.indexOf((b.arch ?? '').toLowerCase());
-		if (ai !== bi) {
-			return (ai === -1 ? ARCH_PRIORITY.length : ai) - (bi === -1 ? ARCH_PRIORITY.length : bi);
-		}
-		return a.fileName.localeCompare(b.fileName);
-	});
-	return ordered[0];
-}
-
-let version = 'Latest';
-let releaseDate = '';
-let downloadRows: { label: string; platform: string; kind: string; url: string; fileName: string; size: number }[] = [];
-let allArtifacts: {
-	platform: string;
-	kind?: string;
-	arch?: string;
-	version?: string;
-	fileName: string;
-	url: string;
-	size?: number;
-	sha512?: string;
-}[] = [];
-let manifestError = false;
-
-try {
-	const response = await fetch(KEYSYNC_LATEST_MANIFEST_URL, {
-		headers: {
-			accept: 'application/json',
+const downloadRuntimeConfig = {
+	manifestUrl: KEYSYNC_LATEST_MANIFEST_URL,
+	fallbackUrl: KEYSYNC_DOWNLOAD_URL,
+	gadsId: SITE_GADS_ID,
+	conversionId: GADS_CONVERSION_ID,
+	copy: {
+		platforms: t.platforms,
+		cli: {
+			generic: t.cli.generic('{arch}'),
+			universal: t.cli.universal,
 		},
-	});
-	if (!response.ok) {
-		throw new Error(`manifest fetch failed: ${response.status}`);
-	}
-	const manifest = (await response.json()) as {
-		artifacts?: unknown[];
-		version?: string;
-		releaseDate?: string;
-	};
-	const rawArtifacts = Array.isArray(manifest?.artifacts) ? manifest.artifacts : [];
-	const safeArtifacts = rawArtifacts.filter((item): item is ManifestArtifact => {
-		if (!item || typeof item !== 'object') {
-			return false;
-		}
-		const candidate = item as { platform?: unknown; fileName?: unknown; url?: unknown; version?: unknown; kind?: unknown; arch?: unknown };
-		return (
-			typeof candidate.platform === 'string' &&
-			typeof candidate.fileName === 'string' &&
-			typeof candidate.url === 'string'
-		);
-	});
-
-	version = manifest?.version
-		? manifest.version.startsWith('v')
-			? manifest.version
-			: `v${manifest.version}`
-		: version;
-	releaseDate = manifest?.releaseDate ? new Date(manifest.releaseDate).toISOString().slice(0, 10) : releaseDate;
-	allArtifacts = safeArtifacts;
-
-	downloadRows = PLATFORM_PRIORITY
-		.map((entry) => {
-			const artifact = pickArtifact(safeArtifacts, entry.platform, entry.kind);
-			if (!artifact) {
-				return null;
-			}
-			return {
-				label: `${entry.label} ${KIND_LABELS[artifact.kind ?? ''] || (artifact.kind ?? '')}`,
-				platform: entry.platform,
-				kind: artifact.kind ?? '',
-				url: artifact.url,
-				fileName: artifact.fileName,
-				size: toNumber(artifact.size),
-			};
-		})
-		.filter(Boolean) as typeof downloadRows;
-
-	if (downloadRows.length === 0 && allArtifacts.length > 0) {
-		downloadRows = allArtifacts
-			.filter((artifact) => !!artifact.url && !!artifact.fileName)
-			.slice(0, 4)
-			.map((artifact) => ({
-				label: `${artifact.platform}${artifact.arch ? ` (${artifact.arch})` : ''}`,
-				platform: artifact.platform,
-				kind: artifact.kind ?? '',
-				url: artifact.url,
-				fileName: artifact.fileName,
-				size: toNumber(artifact.size),
-			}));
-	}
-	if (downloadRows.length === 0) {
-		manifestError = true;
-	}
-} catch {
-	manifestError = true;
-}
-
-type DownloadCard = ManifestArtifact & {
-	platformLabel: string;
-	kindLabel: string;
-	sizeLabel: string;
-	isCli: boolean;
-};
-
-type FeaturedDownloadAction = {
-	label: string;
-	url: string;
-	meta: string;
-};
-
-type FeaturedDownloadCard = {
-	platformKey: string;
-	title: string;
-	description: string;
-	primary?: FeaturedDownloadAction;
-	secondary: FeaturedDownloadAction[];
-};
-
-const platformIndex = (platform: string) => PLATFORM_ORDER.findIndex((item) => item.platform === platform);
-const downloadCards: DownloadCard[] = allArtifacts
-	.filter((artifact) => !!artifact.url && !!artifact.fileName)
-	.map((artifact) => ({
-		...artifact,
-		platformLabel:
-			PLATFORM_ORDER.find((entry) => entry.platform === artifact.platform)?.label || artifact.platform,
-		kindLabel: KIND_LABELS[(artifact.kind ?? '').toLowerCase()] || artifact.kind || 'file',
-		sizeLabel: formatBytes(toNumber(artifact.size)),
-		isCli: artifact.platform === 'Linux CLI',
-	}))
-	.sort((a, b) => {
-		const pa = platformIndex(a.platform);
-		const pb = platformIndex(b.platform);
-		if (pa !== pb) {
-			return (pa === -1 ? PLATFORM_ORDER.length : pa) - (pb === -1 ? PLATFORM_ORDER.length : pb);
-		}
-		const ka = ARCH_PRIORITY.indexOf((a.arch ?? '').toLowerCase());
-		const kb = ARCH_PRIORITY.indexOf((b.arch ?? '').toLowerCase());
-		if (ka !== kb) {
-			return (ka === -1 ? ARCH_PRIORITY.length : ka) - (kb === -1 ? ARCH_PRIORITY.length : kb);
-		}
-		return a.fileName.localeCompare(b.fileName);
-	});
-
-function findDownloadCard(platform: string, kind: string, preferredArch: string) {
-	const matches = downloadCards.filter(
-		(artifact) => artifact.platform === platform && (artifact.kind ?? '').toLowerCase() === kind.toLowerCase(),
-	);
-	return matches.find((artifact) => (artifact.arch ?? '').toLowerCase() === preferredArch) ?? matches[0] ?? null;
-}
-
-function findDownloadCards(platform: string, kind: string) {
-	return downloadCards.filter(
-		(artifact) => artifact.platform === platform && (artifact.kind ?? '').toLowerCase() === kind.toLowerCase(),
-	);
-}
-
-function linuxArchIndex(artifact: DownloadCard) {
-	const index = LINUX_DOWNLOAD_ARCH_ORDER.indexOf((artifact.arch ?? '').toLowerCase());
-	return index === -1 ? LINUX_DOWNLOAD_ARCH_ORDER.length : index;
-}
-
-function downloadAction(artifact: DownloadCard | null, label: string): FeaturedDownloadAction | undefined {
-	if (!artifact) return undefined;
-	return {
-		label,
-		url: artifact.url,
-		meta: `${artifact.arch ? artifact.arch : 'Universal'} · ${artifact.sizeLabel}`,
-	};
-}
-
-const macInstaller = findDownloadCard('macOS', 'dmg', 'arm64');
-const windowsInstaller = findDownloadCard('Windows', 'installer', 'x64');
-const linuxAppImage = findDownloadCard('Linux', 'appimage', 'x64');
-const linuxAppImageArm = findDownloadCard('Linux', 'appimage', 'arm64');
-const linuxCliDownloads = [...findDownloadCards('Linux CLI', 'tar.gz')].sort((a, b) => linuxArchIndex(a) - linuxArchIndex(b));
-const windowsPortable = findDownloadCard('Windows', 'portable', 'x64');
-const linuxSecondaryActions = [
-	linuxAppImageArm?.url !== linuxAppImage?.url
-		? downloadAction(linuxAppImageArm, t.platforms.Linux.appImageArm)
-		: undefined,
-	...linuxCliDownloads.map((artifact) => downloadAction(artifact, t.cli.generic(artifact.arch ?? t.cli.universal))),
-].filter(Boolean) as FeaturedDownloadAction[];
-
-const featuredDownloadCards: FeaturedDownloadCard[] = [
-	{
-		platformKey: 'macOS',
-		title: t.platforms.macOS.title,
-		description: t.platforms.macOS.description,
-		primary: downloadAction(macInstaller, t.platforms.macOS.primary),
-		secondary: [],
+		empty: t.empty,
+		manifest: {
+			unavailable: t.manifest.unavailable,
+			releasedPattern: t.manifest.released('{date}'),
+		},
+		logos: {
+			macOS: { src: appleLogo.src, alt: 'macOS' },
+			Windows: { src: windowsLogo.src, alt: 'Windows' },
+			Linux: { src: linuxLogo.src, alt: 'Linux' },
+		},
 	},
-	{
-		platformKey: 'Windows',
-		title: t.platforms.Windows.title,
-		description: t.platforms.Windows.description,
-		primary: downloadAction(windowsInstaller, t.platforms.Windows.primary),
-		secondary: [downloadAction(windowsPortable, t.platforms.Windows.portable)].filter(Boolean) as FeaturedDownloadAction[],
-	},
-	{
-		platformKey: 'Linux',
-		title: t.platforms.Linux.title,
-		description: t.platforms.Linux.description,
-		primary: downloadAction(linuxAppImage, t.platforms.Linux.primary),
-		secondary: linuxSecondaryActions,
-	},
-];
+};
 
 const translations = { en: '/keysync/download/', zh: '/zh/keysync/download/' } as const;
 const alternates = (Object.entries(translations) as Array<[keyof typeof translations, string]>).map(
@@ -351,106 +79,27 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 			</nav>
 
 			<!-- Download section -->
-			<section class="ks-download-section">
+			<section class="ks-download-section" data-keysync-download-root>
 				<div class="ks-download-head">
 					<h1>{t.title}</h1>
 				</div>
 
-				{featuredDownloadCards.length > 0 ? (
-					<div class="ks-download-grid">
-						{featuredDownloadCards.map((card) => {
-							const logo = platformLogos[card.title];
-							return (
-							<article class="ks-download-choice">
-								<div class="ks-download-platform-header">
-									{logo && <img src={logo.src.src} alt={logo.alt} class="ks-platform-logo" />}
-									<h2 class="ks-download-platform">{card.title}</h2>
-								</div>
-								<p class="ks-download-desc">{card.description}</p>
-								<div class="ks-download-actions">
-									{card.primary ? (
-										<a href={card.primary.url} class="ks-download-entry" data-platform={card.platformKey}>
-											<span>{card.primary.label}</span>
-											<svg class="ks-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-												<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-												<polyline points="7 10 12 15 17 10"></polyline>
-												<line x1="12" y1="15" x2="12" y2="3"></line>
-											</svg>
-										</a>
-									) : (
-										<a href={KEYSYNC_DOWNLOAD_URL} class="ks-download-entry">
-											<span>Open download hub</span>
-											<svg class="ks-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-												<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-												<polyline points="7 10 12 15 17 10"></polyline>
-												<line x1="12" y1="15" x2="12" y2="3"></line>
-											</svg>
-										</a>
-									)}
-									{card.secondary.length > 0 ? (
-										<div class="ks-download-secondary">
-											{card.secondary.map((action) => (
-												<a href={action.url} class="ks-download-entry" data-platform={card.platformKey}>
-													<span>{action.label}</span>
-													<svg class="ks-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-														<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-														<polyline points="7 10 12 15 17 10"></polyline>
-														<line x1="12" y1="15" x2="12" y2="3"></line>
-													</svg>
-												</a>
-											))}
-										</div>
-									) : null}
-								</div>
-							</article>
-							);
-						})}
-					</div>
-				) : (
-					<p class="ks-download-empty">
-						No downloads available. <a href={KEYSYNC_DOWNLOAD_URL}>Open download hub</a>.
-					</p>
-				)}
+				<div class="ks-download-grid" data-keysync-download-grid aria-live="polite"></div>
+				<p class="ks-download-empty" data-keysync-download-empty hidden>
+					{t.empty.text} <a href={KEYSYNC_DOWNLOAD_URL}>{t.empty.fallback}</a>.
+				</p>
 
 				<div class="ks-download-footer">
-					<p class="ks-download-version">
-						{manifestError
-							? 'Manifest unavailable — use fallback link below.'
-							: `${version}${releaseDate ? ` · Released ${releaseDate}` : ''}`}
-					</p>
+					<p class="ks-download-version" data-keysync-download-version>{t.manifest.loading}</p>
 				</div>
 			</section>
 		</main>
 		<Footer lang={locale} />
 
-		<!-- Download Tracking -->
-		<script is:inline define:vars={{ gadsId: SITE_GADS_ID, conversionId: GADS_CONVERSION_ID }}>
-			(function () {
-				function fireConversion(e) {
-					var link = e.currentTarget;
-					var platform = link.closest('[data-platform]')?.dataset.platform || 'unknown';
-					var label = link.querySelector('span')?.textContent || 'unknown';
-
-					if (typeof window.gtag === 'function') {
-						// GA4 event with custom parameters
-						window.gtag('event', 'download_keysync', {
-							platform: platform,
-							tool: 'KeySync',
-							download_label: label,
-						});
-						// Google Ads conversion
-						window.gtag('event', 'conversion', {
-							send_to: gadsId + '/' + conversionId,
-							value: 1.0,
-							currency: 'USD',
-						});
-					}
-				}
-				document.querySelectorAll('.ks-download-entry').forEach(function (link) {
-					link.addEventListener('click', fireConversion, { once: true });
-				});
-			})();
+		<script is:inline define:vars={{ config: downloadRuntimeConfig }}>
+			window.__KEYSYNC_DOWNLOAD_CONFIG__ = config;
 		</script>
+		<script type="module" src="/scripts/keysync-download-runtime.js"></script>
 	</body>
 
 	<style>

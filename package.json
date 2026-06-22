@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "test": "npm run build && npm run test:keysync-download",
+    "test:keysync-download": "node scripts/check-keysync-download-runtime.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

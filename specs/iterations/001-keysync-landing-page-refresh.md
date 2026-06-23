@@ -30,7 +30,7 @@ All tasks and acceptance criteria have been verified. The `/keysync/` page has b
    - Hero tag updated to "Provider sync for AI agents"
    - Hero H1: "Stop re-pasting API keys into every AI agent."
    - Subcopy explains: "API keys, endpoints, and models" across "Claude Code, Codex, OpenClaw, and Hermes"
-   - Primary CTA: `Download KeySync` → `https://demo.signoff.bio/keysync/download`
+   - Primary CTA: `Download KeySync` → `https://keysync.sublang.ai/keysync/download`
    - No "free for a month" language present
 
 2. **Replace abstract proof with product evidence** ✅
@@ -64,7 +64,7 @@ All tasks and acceptance criteria have been verified. The `/keysync/` page has b
 
 ## Acceptance criteria
 
-- [x] The `/keysync/` hero primary CTA opens `https://demo.signoff.bio/keysync/download`.
+- [x] The `/keysync/` hero primary CTA opens `https://keysync.sublang.ai/keysync/download`.
 - [x] The `/keysync/` page contains no `free for a month` CTA copy.
 - [x] The provider drift section uses an illustrative visual of devices with synced/stale configs (no placeholder).
 - [x] The security section uses the real KeySync screenshot via `astro:assets` Image and direct key-control copy.

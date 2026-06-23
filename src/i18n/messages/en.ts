@@ -298,6 +298,7 @@ export const messages = {
 			fallback: 'Open download hub',
 		},
 		manifest: {
+			loading: 'Loading latest release...',
 			unavailable: 'Manifest unavailable — use fallback link below.',
 			released: (date: string) => `Released ${date}`,
 		},

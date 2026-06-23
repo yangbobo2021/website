@@ -24,8 +24,7 @@ const platformLogos: Record<string, { src: ImageMetadata; alt: string }> = {
 
 const PAGE_TITLE = t.pageTitle;
 const PAGE_DESCRIPTION = t.pageDescription;
-const KEYSYNC_DOWNLOAD_URL = 'https://demo.signoff.bio/keysync/download';
-const KEYSYNC_LATEST_MANIFEST_URL = 'https://keysync.sublang.ai/keysync-updates/latest.json';
+const KEYSYNC_DOWNLOAD_URL = 'https://keysync.sublang.ai/keysync/download';
 
 const PLATFORM_PRIORITY = [
 	{ platform: 'macOS', kind: 'dmg', label: 'macOS' },
@@ -119,10 +118,7 @@ function pickArtifact(
 	return ordered[0];
 }
 
-	let version = 'Latest';
-	let releaseDate = '';
-	let downloadRows: { label: string; platform: string; kind: string; url: string; fileName: string; size: number }[] = [];
-	let allArtifacts: {
+let allArtifacts: {
 	platform: string;
 	kind?: string;
 	arch?: string;
@@ -131,80 +127,7 @@ function pickArtifact(
 	url: string;
 	size?: number;
 	sha512?: string;
-	}[] = [];
-	let manifestError = false;
-
-	try {
-		const response = await fetch(KEYSYNC_LATEST_MANIFEST_URL, {
-		headers: {
-			accept: 'application/json',
-		},
-	});
-		if (!response.ok) {
-			throw new Error(`manifest fetch failed: ${response.status}`);
-		}
-		const manifest = (await response.json()) as {
-			artifacts?: unknown[];
-			version?: string;
-			releaseDate?: string;
-		};
-		const rawArtifacts = Array.isArray(manifest?.artifacts) ? manifest.artifacts : [];
-		const safeArtifacts = rawArtifacts.filter((item): item is ManifestArtifact => {
-			if (!item || typeof item !== 'object') {
-				return false;
-			}
-			const candidate = item as { platform?: unknown; fileName?: unknown; url?: unknown; version?: unknown; kind?: unknown; arch?: unknown };
-			return (
-				typeof candidate.platform === 'string' &&
-				typeof candidate.fileName === 'string' &&
-				typeof candidate.url === 'string'
-			);
-		});
-
-		version = manifest?.version
-			? manifest.version.startsWith('v')
-				? manifest.version
-				: `v${manifest.version}`
-			: version;
-		releaseDate = manifest?.releaseDate ? new Date(manifest.releaseDate).toISOString().slice(0, 10) : releaseDate;
-		allArtifacts = safeArtifacts;
-
-	downloadRows = PLATFORM_PRIORITY
-		.map((entry) => {
-			const artifact = pickArtifact(safeArtifacts, entry.platform, entry.kind);
-			if (!artifact) {
-				return null;
-			}
-			return {
-					label: `${entry.label} ${KIND_LABELS[artifact.kind ?? ''] || (artifact.kind ?? '')}`,
-					platform: entry.platform,
-					kind: artifact.kind ?? '',
-					url: artifact.url,
-					fileName: artifact.fileName,
-					size: toNumber(artifact.size),
-				};
-			})
-			.filter(Boolean) as typeof downloadRows;
-
-	if (downloadRows.length === 0 && allArtifacts.length > 0) {
-		downloadRows = allArtifacts
-			.filter((artifact) => !!artifact.url && !!artifact.fileName)
-			.slice(0, 4)
-			.map((artifact) => ({
-					label: `${artifact.platform}${artifact.arch ? ` (${artifact.arch})` : ''}`,
-					platform: artifact.platform,
-					kind: artifact.kind ?? '',
-					url: artifact.url,
-					fileName: artifact.fileName,
-					size: toNumber(artifact.size),
-				}));
-	}
-	if (downloadRows.length === 0) {
-		manifestError = true;
-	}
-} catch {
-	manifestError = true;
-}
+}[] = [];
 
 type DownloadCard = ManifestArtifact & {
 	platformLabel: string;

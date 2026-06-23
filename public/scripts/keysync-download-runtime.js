@@ -2,7 +2,20 @@
 // SPDX-FileCopyrightText: 2026 SubLang International <https://sublang.ai>
 
 const ARCH_PRIORITY = ['arm64', 'x64', 'x86_64', 'amd64'];
-const LINUX_DOWNLOAD_ARCH_ORDER = ['x64', 'x86_64', 'amd64', 'arm64'];
+const ARCH_ALIASES = {
+	x64: ['x64', 'x86_64', 'amd64'],
+	arm64: ['arm64', 'aarch64'],
+};
+
+export const DOWNLOAD_TARGETS = [
+	{ id: 'macos-dmg', platform: 'macOS', kind: 'dmg', arch: 'arm64' },
+	{ id: 'windows-installer', platform: 'Windows', kind: 'installer', arch: 'x64' },
+	{ id: 'windows-portable', platform: 'Windows', kind: 'portable', arch: 'x64' },
+	{ id: 'linux-appimage-x64', platform: 'Linux', kind: 'appimage', arch: 'x64' },
+	{ id: 'linux-appimage-arm64', platform: 'Linux', kind: 'appimage', arch: 'arm64' },
+	{ id: 'linux-cli-x64', platform: 'Linux CLI', kind: 'tar.gz', arch: 'x64' },
+	{ id: 'linux-cli-arm64', platform: 'Linux CLI', kind: 'tar.gz', arch: 'arm64' },
+];
 
 function toNumber(value) {
 	if (typeof value === 'number' && Number.isFinite(value)) {
@@ -30,19 +43,6 @@ function formatBytes(bytes) {
 	return `${size.toFixed(1)} ${units[unit]}`;
 }
 
-function escapeHtml(value) {
-	return String(value ?? '')
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#39;');
-}
-
-function escapeAttr(value) {
-	return escapeHtml(value);
-}
-
 function normalizeArtifacts(manifest) {
 	const rawArtifacts = Array.isArray(manifest?.artifacts) ? manifest.artifacts : [];
 	return rawArtifacts.filter((item) => {
@@ -56,9 +56,9 @@ function normalizeArtifacts(manifest) {
 	});
 }
 
-function archIndex(arch, order = ARCH_PRIORITY) {
-	const index = order.indexOf(String(arch ?? '').toLowerCase());
-	return index === -1 ? order.length : index;
+function archIndex(arch) {
+	const index = ARCH_PRIORITY.indexOf(String(arch ?? '').toLowerCase());
+	return index === -1 ? ARCH_PRIORITY.length : index;
 }
 
 function platformIndex(platform) {
@@ -67,36 +67,28 @@ function platformIndex(platform) {
 	return index === -1 ? order.length : index;
 }
 
-function pickArtifact(artifacts, platform, kind, preferredArch) {
-	const matches = artifacts.filter(
-		(item) => item.platform === platform && String(item.kind ?? '').toLowerCase() === kind.toLowerCase(),
-	);
+function normalizeKind(kind) {
+	return String(kind ?? '').toLowerCase();
+}
+
+function archMatches(actual, expected) {
+	const normalizedActual = String(actual ?? '').toLowerCase();
+	const accepted = ARCH_ALIASES[expected] || [expected];
+	return accepted.includes(normalizedActual);
+}
+
+function pickArtifact(artifacts, target) {
+	const matches = artifacts.filter((item) => {
+		return (
+			item.platform === target.platform &&
+			normalizeKind(item.kind) === normalizeKind(target.kind) &&
+			archMatches(item.arch, target.arch)
+		);
+	});
 	if (matches.length === 0) {
 		return null;
 	}
-	const preferred = matches.find((artifact) => String(artifact.arch ?? '').toLowerCase() === preferredArch);
-	if (preferred) {
-		return preferred;
-	}
-	return [...matches].sort((a, b) => {
-		const archDelta = archIndex(a.arch) - archIndex(b.arch);
-		return archDelta || a.fileName.localeCompare(b.fileName);
-	})[0];
-}
-
-function findArtifacts(artifacts, platform, kind) {
-	return artifacts.filter(
-		(item) => item.platform === platform && String(item.kind ?? '').toLowerCase() === kind.toLowerCase(),
-	);
-}
-
-function actionFromArtifact(artifact, label) {
-	if (!artifact) return undefined;
-	return {
-		label,
-		url: artifact.url,
-		meta: `${artifact.arch ? artifact.arch : 'Universal'} · ${formatBytes(artifact.size)}`,
-	};
+	return [...matches].sort((a, b) => archIndex(a.arch) - archIndex(b.arch) || a.fileName.localeCompare(b.fileName))[0];
 }
 
 function releasedText(pattern, date) {
@@ -108,106 +100,108 @@ function cacheBustedUrl(url) {
 	return `${url}${separator}t=${Date.now()}`;
 }
 
+function actionFromArtifact(artifact, version) {
+	if (!artifact) return undefined;
+	return {
+		url: artifact.url,
+		fileName: artifact.fileName,
+		version,
+		meta: `${artifact.arch ? artifact.arch : 'Universal'} · ${formatBytes(artifact.size)}`,
+	};
+}
+
 export function buildDownloadView(manifest, copy) {
-	const artifacts = normalizeArtifacts(manifest)
-		.filter((artifact) => artifact.url && artifact.fileName)
-		.sort((a, b) => {
-			const platformDelta = platformIndex(a.platform) - platformIndex(b.platform);
-			return platformDelta || archIndex(a.arch) - archIndex(b.arch) || a.fileName.localeCompare(b.fileName);
-		});
+	const artifacts = normalizeArtifacts(manifest).sort((a, b) => {
+		const platformDelta = platformIndex(a.platform) - platformIndex(b.platform);
+		return platformDelta || archIndex(a.arch) - archIndex(b.arch) || a.fileName.localeCompare(b.fileName);
+	});
 	const version = manifest?.version
 		? String(manifest.version).startsWith('v')
 			? String(manifest.version)
 			: `v${manifest.version}`
 		: 'Latest';
 	const releaseDate = manifest?.releaseDate ? new Date(manifest.releaseDate).toISOString().slice(0, 10) : '';
-	const macInstaller = pickArtifact(artifacts, 'macOS', 'dmg', 'arm64');
-	const windowsInstaller = pickArtifact(artifacts, 'Windows', 'installer', 'x64');
-	const windowsPortable = pickArtifact(artifacts, 'Windows', 'portable', 'x64');
-	const linuxAppImage = pickArtifact(artifacts, 'Linux', 'appimage', 'x64');
-	const linuxAppImageArm = pickArtifact(artifacts, 'Linux', 'appimage', 'arm64');
-	const linuxCliDownloads = [...findArtifacts(artifacts, 'Linux CLI', 'tar.gz')].sort(
-		(a, b) => archIndex(a.arch, LINUX_DOWNLOAD_ARCH_ORDER) - archIndex(b.arch, LINUX_DOWNLOAD_ARCH_ORDER),
-	);
-	const linuxSecondary = [
-		linuxAppImageArm?.url !== linuxAppImage?.url
-			? actionFromArtifact(linuxAppImageArm, copy.platforms.Linux.appImageArm)
-			: undefined,
-		...linuxCliDownloads.map((artifact) =>
-			actionFromArtifact(artifact, copy.cli.generic.replace('{arch}', artifact.arch ?? copy.cli.universal)),
-		),
-	].filter(Boolean);
-	const cards = [
-		{
-			platformKey: 'macOS',
-			title: copy.platforms.macOS.title,
-			description: copy.platforms.macOS.description,
-			logo: copy.logos.macOS,
-			primary: actionFromArtifact(macInstaller, copy.platforms.macOS.primary),
-			secondary: [],
-		},
-		{
-			platformKey: 'Windows',
-			title: copy.platforms.Windows.title,
-			description: copy.platforms.Windows.description,
-			logo: copy.logos.Windows,
-			primary: actionFromArtifact(windowsInstaller, copy.platforms.Windows.primary),
-			secondary: [actionFromArtifact(windowsPortable, copy.platforms.Windows.portable)].filter(Boolean),
-		},
-		{
-			platformKey: 'Linux',
-			title: copy.platforms.Linux.title,
-			description: copy.platforms.Linux.description,
-			logo: copy.logos.Linux,
-			primary: actionFromArtifact(linuxAppImage, copy.platforms.Linux.primary),
-			secondary: linuxSecondary,
-		},
-	].filter((card) => card.primary || card.secondary.length > 0);
+	const actions = {};
+	const missingTargets = [];
+
+	for (const target of DOWNLOAD_TARGETS) {
+		const artifact = pickArtifact(artifacts, target);
+		const action = actionFromArtifact(artifact, version);
+		if (action) {
+			actions[target.id] = action;
+		} else {
+			missingTargets.push(target.id);
+		}
+	}
 
 	return {
 		version,
 		releaseDate,
 		versionText: releaseDate ? `${version} · ${releasedText(copy.manifest.releasedPattern, releaseDate)}` : version,
-		cards,
+		actions,
+		missingTargets,
 	};
 }
 
-function downloadIcon() {
-	return '<svg class="ks-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>';
+function getDownloadLinks(root) {
+	return Array.from(root.querySelectorAll('[data-download-target]'));
 }
 
-function renderAction(action, platformKey) {
-	return `<a href="${escapeAttr(action.url)}" class="ks-download-entry" data-platform="${escapeAttr(platformKey)}"><span>${escapeHtml(action.label)}</span>${downloadIcon()}</a>`;
+function setLinkDisabled(link, status) {
+	link.href = '#';
+	link.setAttribute('aria-disabled', 'true');
+	link.dataset.downloadStatus = status;
+	delete link.dataset.downloadFileName;
+	delete link.dataset.downloadVersion;
+	delete link.dataset.downloadMeta;
 }
 
-export function renderDownloadCardsHtml(cards) {
-	return cards
-		.map((card) => {
-			const logo = card.logo
-				? `<img src="${escapeAttr(card.logo.src)}" alt="${escapeAttr(card.logo.alt)}" class="ks-platform-logo" />`
-				: '';
-			const primary = card.primary ? renderAction(card.primary, card.platformKey) : '';
-			const secondary =
-				card.secondary.length > 0
-					? `<div class="ks-download-secondary">${card.secondary
-							.map((action) => renderAction(action, card.platformKey))
-							.join('')}</div>`
-					: '';
-			return `<article class="ks-download-choice"><div class="ks-download-platform-header">${logo}<h2 class="ks-download-platform">${escapeHtml(card.title)}</h2></div><p class="ks-download-desc">${escapeHtml(card.description)}</p><div class="ks-download-actions">${primary}${secondary}</div></article>`;
-		})
-		.join('');
+function updateDownloadLinks(root, actions) {
+	const links = getDownloadLinks(root);
+	const expectedIds = new Set(DOWNLOAD_TARGETS.map((target) => target.id));
+	const presentIds = new Set(links.map((link) => link.dataset.downloadTarget).filter(Boolean));
+	const missingDomTargets = [...expectedIds].filter((id) => !presentIds.has(id));
+	const extraDomTargets = [...presentIds].filter((id) => !expectedIds.has(id));
+	if (missingDomTargets.length > 0 || extraDomTargets.length > 0) {
+		throw new Error(
+			`download page targets mismatch: missing=${missingDomTargets.join(',') || 'none'} extra=${
+				extraDomTargets.join(',') || 'none'
+			}`,
+		);
+	}
+
+	for (const link of links) {
+		const action = actions[link.dataset.downloadTarget];
+		if (!action) {
+			setLinkDisabled(link, 'missing');
+			continue;
+		}
+		link.href = action.url;
+		link.setAttribute('aria-disabled', 'false');
+		link.dataset.downloadStatus = 'ready';
+		link.dataset.downloadFileName = action.fileName;
+		link.dataset.downloadVersion = action.version;
+		link.dataset.downloadMeta = action.meta;
+	}
 }
 
 function setFallback(root, fallbackUrl, copy) {
-	const grid = root.querySelector('[data-keysync-download-grid]');
 	const empty = root.querySelector('[data-keysync-download-empty]');
 	const version = root.querySelector('[data-keysync-download-version]');
-	if (grid) grid.innerHTML = '';
+	for (const link of getDownloadLinks(root)) {
+		setLinkDisabled(link, 'error');
+	}
 	if (empty) {
 		empty.hidden = false;
-		empty.innerHTML = `${escapeHtml(copy.empty.text)} <a href="${escapeAttr(fallbackUrl)}">${escapeHtml(
-			copy.empty.fallback,
-		)}</a>.`;
+		const fallbackLink = empty.querySelector('a');
+		if (fallbackLink) {
+			fallbackLink.href = fallbackUrl;
+			fallbackLink.textContent = copy.empty.fallback;
+		}
+		const textNode = Array.from(empty.childNodes || []).find((node) => node.nodeType === 3);
+		if (textNode) {
+			textNode.textContent = `${copy.empty.text} `;
+		}
 	}
 	if (version) version.textContent = copy.manifest.unavailable;
 	root.dataset.manifestState = 'error';
@@ -216,7 +210,6 @@ function setFallback(root, fallbackUrl, copy) {
 export async function initKeySyncDownloadPage({ document, fetchImpl, manifestUrl, fallbackUrl, copy }) {
 	const roots = Array.from(document.querySelectorAll('[data-keysync-download-root]'));
 	if (roots.length === 0) return;
-	let manifest;
 	try {
 		const response = await fetchImpl(cacheBustedUrl(manifestUrl), {
 			headers: { accept: 'application/json' },
@@ -225,16 +218,15 @@ export async function initKeySyncDownloadPage({ document, fetchImpl, manifestUrl
 		if (!response.ok) {
 			throw new Error(`manifest fetch failed: ${response.status}`);
 		}
-		manifest = await response.json();
+		const manifest = await response.json();
 		const view = buildDownloadView(manifest, copy);
-		if (view.cards.length === 0) {
-			throw new Error('manifest has no downloadable artifacts');
+		if (view.missingTargets.length > 0) {
+			throw new Error(`manifest is missing download targets: ${view.missingTargets.join(',')}`);
 		}
 		for (const root of roots) {
-			const grid = root.querySelector('[data-keysync-download-grid]');
 			const empty = root.querySelector('[data-keysync-download-empty]');
 			const version = root.querySelector('[data-keysync-download-version]');
-			if (grid) grid.innerHTML = renderDownloadCardsHtml(view.cards);
+			updateDownloadLinks(root, view.actions);
 			if (empty) empty.hidden = true;
 			if (version) version.textContent = view.versionText;
 			root.dataset.manifestState = 'ready';
@@ -251,6 +243,10 @@ export function setupKeySyncDownloadTracking({ document, gadsId, conversionId })
 	document.addEventListener('click', (event) => {
 		const link = event.target?.closest?.('.ks-download-entry');
 		if (!link) return;
+		if (link.getAttribute('aria-disabled') === 'true') {
+			event.preventDefault();
+			return;
+		}
 		const platform = link.dataset.platform || 'unknown';
 		const label = link.querySelector('span')?.textContent || 'unknown';
 		if (typeof window.gtag === 'function') {

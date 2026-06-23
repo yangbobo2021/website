@@ -5,13 +5,14 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+	DOWNLOAD_TARGETS,
 	buildDownloadView,
 	initKeySyncDownloadPage,
-	renderDownloadCardsHtml,
 } from '../public/scripts/keysync-download-runtime.js';
 
 const manifestUrl = 'https://keysync.sublang.ai/keysync-updates/latest.json';
 const fallbackUrl = 'https://keysync.sublang.ai/keysync/download';
+const expectedTargetIds = DOWNLOAD_TARGETS.map((target) => target.id);
 
 const copy = {
 	platforms: {
@@ -45,11 +46,6 @@ const copy = {
 		loading: 'Loading latest release...',
 		unavailable: 'Manifest unavailable - use fallback link below.',
 		releasedPattern: 'Released {date}',
-	},
-	logos: {
-		macOS: { src: '/assets/apple.svg', alt: 'macOS' },
-		Windows: { src: '/assets/windows.svg', alt: 'Windows' },
-		Linux: { src: '/assets/linux.svg', alt: 'Linux' },
 	},
 };
 
@@ -119,12 +115,19 @@ function makeManifest(version) {
 	};
 }
 
+class FakeTextNode {
+	constructor(textContent = '') {
+		this.nodeType = 3;
+		this.textContent = textContent;
+	}
+}
+
 class FakeNode {
 	constructor() {
-		this.innerHTML = '';
 		this.textContent = '';
 		this.hidden = false;
 		this.dataset = {};
+		this.childNodes = [];
 	}
 
 	querySelector() {
@@ -132,12 +135,52 @@ class FakeNode {
 	}
 }
 
+class FakeAnchor extends FakeNode {
+	constructor({ targetId, platform = 'unknown', label = targetId }) {
+		super();
+		this.href = '#';
+		this.dataset = {
+			downloadTarget: targetId,
+			platform,
+			downloadStatus: 'pending',
+		};
+		this.attributes = new Map([['aria-disabled', 'true']]);
+		this.labelNode = { textContent: label };
+	}
+
+	setAttribute(name, value) {
+		this.attributes.set(name, String(value));
+	}
+
+	getAttribute(name) {
+		return this.attributes.get(name) ?? null;
+	}
+
+	querySelector(selector) {
+		return selector === 'span' ? this.labelNode : null;
+	}
+}
+
+class FakeEmpty extends FakeNode {
+	constructor() {
+		super();
+		this.childNodes = [new FakeTextNode('No downloads available. ')];
+		this.fallbackLink = new FakeAnchor({ targetId: 'fallback', label: 'Open download hub' });
+	}
+
+	querySelector(selector) {
+		return selector === 'a' ? this.fallbackLink : null;
+	}
+}
+
 class FakeRoot extends FakeNode {
 	constructor() {
 		super();
 		this.grid = new FakeNode();
-		this.empty = new FakeNode();
+		this.grid.innerHTML = 'static download grid must stay intact';
+		this.empty = new FakeEmpty();
 		this.version = new FakeNode();
+		this.links = DOWNLOAD_TARGETS.map((target) => new FakeAnchor({ targetId: target.id, platform: target.platform }));
 	}
 
 	querySelector(selector) {
@@ -145,6 +188,11 @@ class FakeRoot extends FakeNode {
 		if (selector === '[data-keysync-download-empty]') return this.empty;
 		if (selector === '[data-keysync-download-version]') return this.version;
 		return null;
+	}
+
+	querySelectorAll(selector) {
+		if (selector === '[data-download-target]') return this.links;
+		return [];
 	}
 }
 
@@ -171,11 +219,49 @@ function readIfExists(path) {
 	return existsSync(path) ? readFileSync(path, 'utf8') : '';
 }
 
+function assertReadyLinks(root, version) {
+	assert.equal(root.links.length, 7);
+	for (const link of root.links) {
+		assert.equal(link.getAttribute('aria-disabled'), 'false', `${link.dataset.downloadTarget} should be enabled`);
+		assert.equal(link.dataset.downloadStatus, 'ready', `${link.dataset.downloadTarget} should be ready`);
+		assert.equal(link.dataset.downloadVersion, `v${version}`, `${link.dataset.downloadTarget} version mismatch`);
+		assert.match(link.href, new RegExp(`/${version}/`), `${link.dataset.downloadTarget} URL should include version`);
+		assert.ok(link.dataset.downloadFileName, `${link.dataset.downloadTarget} should expose a file name`);
+		assert.ok(link.dataset.downloadMeta, `${link.dataset.downloadTarget} should expose file metadata`);
+	}
+	assert.match(root.links.find((link) => link.dataset.downloadTarget === 'macos-dmg').href, /KeySync-0\.1\.\d+-arm64\.dmg$/);
+	assert.match(
+		root.links.find((link) => link.dataset.downloadTarget === 'windows-installer').href,
+		/KeySync%20Setup%200\.1\.\d+\.exe$/,
+	);
+	assert.match(
+		root.links.find((link) => link.dataset.downloadTarget === 'windows-portable').href,
+		/KeySync-0\.1\.\d+-portable\.zip$/,
+	);
+	assert.match(
+		root.links.find((link) => link.dataset.downloadTarget === 'linux-appimage-x64').href,
+		/KeySync-0\.1\.\d+-x86_64\.AppImage$/,
+	);
+	assert.match(
+		root.links.find((link) => link.dataset.downloadTarget === 'linux-appimage-arm64').href,
+		/KeySync-0\.1\.\d+-arm64\.AppImage$/,
+	);
+	assert.match(
+		root.links.find((link) => link.dataset.downloadTarget === 'linux-cli-x64').href,
+		/keysync-cli-0\.1\.\d+-linux-x64\.tar\.gz$/,
+	);
+	assert.match(
+		root.links.find((link) => link.dataset.downloadTarget === 'linux-cli-arm64').href,
+		/keysync-cli-0\.1\.\d+-linux-arm64\.tar\.gz$/,
+	);
+}
+
 const firstView = buildDownloadView(makeManifest('0.1.10'), copy);
 assert.equal(firstView.versionText, 'v0.1.10 · Released 2026-06-23');
-assert.equal(firstView.cards.length, 3);
-assert.match(renderDownloadCardsHtml(firstView.cards), /KeySync-0\.1\.10-arm64\.dmg/);
-assert.match(renderDownloadCardsHtml(firstView.cards), /keysync-cli-0\.1\.10-linux-arm64\.tar\.gz/);
+assert.deepEqual(Object.keys(firstView.actions).sort(), [...expectedTargetIds].sort());
+assert.deepEqual(firstView.missingTargets, []);
+assert.match(firstView.actions['macos-dmg'].url, /KeySync-0\.1\.10-arm64\.dmg$/);
+assert.match(firstView.actions['linux-cli-arm64'].url, /keysync-cli-0\.1\.10-linux-arm64\.tar\.gz$/);
 
 const root = new FakeRoot();
 const document = makeFakeDocument(root);
@@ -192,8 +278,9 @@ await initKeySyncDownloadPage({
 });
 assert.equal(root.dataset.manifestState, 'ready');
 assert.equal(root.dataset.releaseVersion, 'v0.1.10');
-assert.match(root.grid.innerHTML, /KeySync-0\.1\.10-arm64\.dmg/);
+assert.equal(root.grid.innerHTML, 'static download grid must stay intact');
 assert.equal(root.empty.hidden, true);
+assertReadyLinks(root, '0.1.10');
 
 await initKeySyncDownloadPage({
 	document,
@@ -203,8 +290,9 @@ await initKeySyncDownloadPage({
 	copy,
 });
 assert.equal(root.dataset.releaseVersion, 'v0.1.11');
-assert.doesNotMatch(root.grid.innerHTML, /KeySync-0\.1\.10-arm64\.dmg/);
-assert.match(root.grid.innerHTML, /KeySync-0\.1\.11-arm64\.dmg/);
+assert.equal(root.grid.innerHTML, 'static download grid must stay intact');
+assertReadyLinks(root, '0.1.11');
+assert.doesNotMatch(root.links.find((link) => link.dataset.downloadTarget === 'macos-dmg').href, /0\.1\.10/);
 
 await initKeySyncDownloadPage({
 	document,
@@ -214,10 +302,15 @@ await initKeySyncDownloadPage({
 	copy,
 });
 assert.equal(root.dataset.manifestState, 'error');
-assert.equal(root.grid.innerHTML, '');
+assert.equal(root.grid.innerHTML, 'static download grid must stay intact');
 assert.equal(root.empty.hidden, false);
-assert.match(root.empty.innerHTML, /https:\/\/keysync\.sublang\.ai\/keysync\/download/);
+assert.equal(root.empty.fallbackLink.href, fallbackUrl);
 assert.equal(root.version.textContent, copy.manifest.unavailable);
+for (const link of root.links) {
+	assert.equal(link.href, '#');
+	assert.equal(link.getAttribute('aria-disabled'), 'true');
+	assert.equal(link.dataset.downloadStatus, 'error');
+}
 
 for (const file of walkFiles('src').concat(walkFiles('specs'))) {
 	const text = readFileSync(file, 'utf8');
@@ -252,5 +345,24 @@ if (existsSync('dist')) {
 			/KeySync(?:%20Setup)?[^"'<>]*(?:\d+\.\d+\.\d+)/,
 			`${outputPath} contains static versioned installer links`,
 		);
+		const targets = [...html.matchAll(/data-download-target="([^"]+)"/g)].map((match) => match[1]);
+		assert.deepEqual(targets.sort(), [...expectedTargetIds].sort(), `${outputPath} must contain exactly 7 fixed links`);
+		assert.equal((html.match(/href="#"/g) || []).length, 7, `${outputPath} fixed links must start disabled`);
+		assert.match(html, /class="ks-platform-logo" data-astro-cid-/, `${outputPath} platform logos must be statically scoped`);
 	}
+
+	const builtRuntime = readIfExists('dist/scripts/keysync-download-runtime.js');
+	assert.doesNotMatch(builtRuntime, /renderDownloadCardsHtml/, 'runtime must not render download cards dynamically');
+	assert.doesNotMatch(builtRuntime, /ks-download-choice/, 'runtime must not contain static card markup');
+	assert.doesNotMatch(builtRuntime, /innerHTML\s*=/, 'runtime must not replace fixed download card markup');
+
+	const builtCss = walkFiles('dist/_astro')
+		.filter((file) => file.endsWith('.css'))
+		.map((file) => readFileSync(file, 'utf8'))
+		.join('\n');
+	assert.match(
+		builtCss,
+		/\.ks-platform-logo\[data-astro-cid-[^\]]+\]\{width:28px;height:28px;flex-shrink:0\}/,
+		'static platform logos should keep Astro-scoped sizing',
+	);
 }

@@ -49,6 +49,38 @@ const downloadRuntimeConfig = {
 	},
 };
 
+const downloadCards = [
+	{
+		platformKey: 'macOS',
+		title: t.platforms.macOS.title,
+		description: t.platforms.macOS.description,
+		logo: { src: appleLogo.src, alt: 'macOS' },
+		actions: [{ id: 'macos-dmg', label: t.platforms.macOS.primary }],
+	},
+	{
+		platformKey: 'Windows',
+		title: t.platforms.Windows.title,
+		description: t.platforms.Windows.description,
+		logo: { src: windowsLogo.src, alt: 'Windows' },
+		actions: [
+			{ id: 'windows-installer', label: t.platforms.Windows.primary },
+			{ id: 'windows-portable', label: t.platforms.Windows.portable },
+		],
+	},
+	{
+		platformKey: 'Linux',
+		title: t.platforms.Linux.title,
+		description: t.platforms.Linux.description,
+		logo: { src: linuxLogo.src, alt: 'Linux' },
+		actions: [
+			{ id: 'linux-appimage-x64', label: t.platforms.Linux.primary },
+			{ id: 'linux-appimage-arm64', label: t.platforms.Linux.appImageArm },
+			{ id: 'linux-cli-x64', label: t.cli.generic('x64') },
+			{ id: 'linux-cli-arm64', label: t.cli.generic('arm64') },
+		],
+	},
+];
+
 const translations = { en: '/keysync/download/', zh: '/zh/keysync/download/' } as const;
 const alternates = (Object.entries(translations) as Array<[keyof typeof translations, string]>).map(
 	([loc, path]) => ({
@@ -84,7 +116,52 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 					<h1>{t.title}</h1>
 				</div>
 
-				<div class="ks-download-grid" data-keysync-download-grid aria-live="polite"></div>
+				<div class="ks-download-grid" data-keysync-download-grid aria-live="polite">
+					{
+						downloadCards.map((card) => (
+							<article class="ks-download-choice">
+								<div class="ks-download-platform-header">
+									<img src={card.logo.src} alt={card.logo.alt} class="ks-platform-logo" />
+									<h2 class="ks-download-platform">{card.title}</h2>
+								</div>
+								<p class="ks-download-desc">{card.description}</p>
+								<div class="ks-download-actions">
+									{card.actions.map((action, index) => (
+										<div class={index === 0 ? undefined : 'ks-download-secondary'}>
+											<a
+												href="#"
+												class="ks-download-entry"
+												data-download-target={action.id}
+												data-keysync-download-link
+												data-platform={card.platformKey}
+												aria-disabled="true"
+												data-download-status="pending"
+											>
+												<span>{action.label}</span>
+												<svg
+													class="ks-download-icon"
+													width="16"
+													height="16"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2.4"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+													<polyline points="7 10 12 15 17 10"></polyline>
+													<line x1="12" y1="15" x2="12" y2="3"></line>
+												</svg>
+											</a>
+										</div>
+									))}
+								</div>
+							</article>
+						))
+					}
+				</div>
 				<p class="ks-download-empty" data-keysync-download-empty hidden>
 					{t.empty.text} <a href={KEYSYNC_DOWNLOAD_URL}>{t.empty.fallback}</a>.
 				</p>
@@ -237,6 +314,15 @@ const alternates = (Object.entries(translations) as Array<[keyof typeof translat
 	.ks-download-entry:focus-visible {
 		border-color: var(--accent);
 		background: rgba(137, 15, 188, 0.03);
+	}
+	.ks-download-entry[aria-disabled="true"] {
+		cursor: not-allowed;
+		opacity: 0.55;
+	}
+	.ks-download-entry[aria-disabled="true"]:hover,
+	.ks-download-entry[aria-disabled="true"]:focus-visible {
+		border-color: var(--ks-line);
+		background: var(--surface);
 	}
 	.ks-download-entry:focus-visible {
 		outline: 2px solid var(--accent);
